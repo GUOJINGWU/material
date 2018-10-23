@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsTypeDAO">
+
+	<sql id="goodstype_columns_withoutID">
+		name, companyId, companyName, rank, pid, code, status, createId, creator, createTime, updateId, updator, updateTime
+	</sql>
+
+	<sql id="goodstype_columns">
+		id,
+		<include refid="goodstype_columns_withoutID" />
+	</sql>
+
+	<select id="findGoodsTypeById" resultType="com.youzhicai.materialstore.po.GoodsTypePO">
+		SELECT
+		<include refid="goodstype_columns" />
+		FROM goodstype WHERE id = #{id}
+	</select>
+
+	<select id="findSubtypeList" resultType="com.youzhicai.materialstore.po.GoodsTypePO">
+		SELECT
+		<include refid="goodstype_columns" />
+		FROM goodstype WHERE pid = #{pid}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsTypePO">
+		INSERT INTO goodstype
+		(
+		<include refid="goodstype_columns_withoutID" />
+		)
+		VALUES(#{name},#{companyId},#{companyName},#{rank},#{pid},#{code},#{status},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime})
+	</insert>
+
+	<!-- 修改 -->
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsTypePO">
+		UPDATE goodstype
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="rank != null and rank != '' ">
+			,rank = #{rank}
+		</if>
+		<if test="pid != null and pid != '' ">
+			,pid = #{pid}
+		</if>
+		<if test="code != null and code != '' ">
+			,code = #{code}
+		</if>
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 三级物资类型混合查询 -->
+	<select id="findThirdRankMixList" resultType="java.util.HashMap">
+		SELECT 	gt1.id AS firstId, gt1.name AS firstName, gt1.code AS firstCode,
+				gt2.id AS secondId, gt2.name AS secondName, gt2.code AS secondCode,
+				gt3.id AS thirdId, gt3.name AS thirdName, gt3.code AS thirdCode,
+				gt3.creator, gt3.createTime 
+				,(SELECT COUNT(1) FROM goods g WHERE g.status = 1 AND g.tid = gt3.id) AS goodsCount 
+		FROM goodstype gt3 
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid 
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid 
+		WHERE gt3.rank = 3 AND gt3.status = 1
+		<if test="firstId != null and firstId != '' ">
+			AND gt1.id = #{firstId} 
+		</if>
+		<if test="secondId != null and secondId != '' ">
+			AND gt2.id = #{secondId} 
+		</if>
+		<if test="thirdId != null and thirdId != '' ">
+			AND gt3.id = #{thirdId} 
+		</if>
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.createTime DESC 
+		LIMIT #{start},#{num}
+	</select>
+	
+	<!-- 三级物资类型混合总量查询 -->
+	<select id="findThirdRankMixListCount" resultType="int" >
+		SELECT count(1)
+		FROM goodstype gt3 
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid 
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid 
+		WHERE gt3.rank = 3 AND gt3.status = 1
+		<if test="firstId != null and firstId != '' ">
+			AND gt1.id = #{firstId} 
+		</if>
+		<if test="secondId != null and secondId != '' ">
+			AND gt2.id = #{secondId} 
+		</if>
+		<if test="thirdId != null and thirdId != '' ">
+			AND gt3.id = #{thirdId} 
+		</if>
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.createTime DESC 
+	</select>
+
+</mapper>   

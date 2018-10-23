@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsApproveDAO">
+
+	<sql id="goodsapprove_columns_withoutID">
+		gid, status, remarks, uid, user, time
+	</sql>
+
+	<sql id="goodsapprove_columns">
+		id,
+		<include refid="goodsapprove_columns_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsApprovePO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO goodsapprove
+		(
+		<include refid="goodsapprove_columns_withoutID" />
+		)
+		SELECT
+		#{gid},#{status},#{remarks},#{uid},#{user},#{time}
+		FROM DUAL
+		WHERE NOT EXISTS(SELECT id FROM goodsapprove WHERE gid = #{gid} )
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsApprovePO">
+		UPDATE goodsapprove
+		SET time = NOW()
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="remarks != null and remarks != '' ">
+			,remarks = #{remarks}
+		</if>
+		<if test="uid != null and uid != '' ">
+			,uid = #{uid}
+		</if>
+		<if test="user != null and user != '' ">
+			,user = #{user}
+		</if>
+		WHERE gid = #{gid}
+	</update>
+
+	<select id="findByGid" resultType="com.youzhicai.materialstore.po.GoodsApprovePO">
+		SELECT
+		<include refid="goodsapprove_columns" />
+		FROM goodsapprove
+		WHERE gid = #{gid}
+		limit 1
+	</select>
+
+</mapper>   

@@ -1,0 +1,37 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>watchBigPic</title>
+
+<link rel="stylesheet" th:href="@{/res/css/dialog-content.css}" />
+<script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+
+</head>
+<body>
+	<div class="inner-content yzc-clearfix">
+		<h3 class="add-member-title">查看大图</h3>
+		<img src="../../res//images/credential.jpg" class="big-pic"></img>
+	    <a class="plan-white-btn close-btn">关闭</a>
+			
+    </div>
+      
+      <script>
+      
+      $(function(){
+    	  
+    	  $(".close-btn").click(function(){
+    	       	top.CloseDialog("watch-big-pic");
+    	       })
+    	    
+      });
+      
+     
+    
+           
+           
+    
+    </script>
+</body>
+</html>

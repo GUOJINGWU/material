@@ -1,0 +1,327 @@
+/**  
+ * @Title: GoodsTypeServiceImpl.java
+ * @Package com.youzhicai.materialstore.service.impl
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:15:23
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.service.impl;
+
+import static com.youzhicai.materialstore.common.constant.GoodsTypeStatus.NORMAL;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.youzhicai.materialstore.common.constant.GoodsTypeCode;
+import com.youzhicai.materialstore.common.constant.GoodsTypeRank;
+import com.youzhicai.materialstore.common.constant.GoodsTypeStatus;
+import com.youzhicai.materialstore.common.constant.TypeTokens;
+import com.youzhicai.materialstore.common.util.POUtil;
+import com.youzhicai.materialstore.dao.GoodsTypeDAO;
+import com.youzhicai.materialstore.dto.GoodsTypeDTO;
+import com.youzhicai.materialstore.dto.GoodsTypePageDTO;
+import com.youzhicai.materialstore.handler.Page;
+import com.youzhicai.materialstore.po.GoodsTypePO;
+import com.youzhicai.materialstore.service.GoodsTypeService;
+import com.youzhicai.materialstore.vo.GoodsTypeThirdRankMixVO;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+
+/**
+ * @ClassName: GoodsTypeServiceImpl
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:15:23
+ */
+@Service
+public class GoodsTypeServiceImpl implements GoodsTypeService {
+
+    @Autowired
+    private GoodsTypeDAO goodsTypeDAO;
+
+    /*
+     * 校验物资类型级别
+     */
+    private boolean checkGoodsTypeRank(int rank) {
+        boolean checkResult = false;
+        for (GoodsTypeRank goodsTypeRank : GoodsTypeRank.values()) {
+            if (rank == goodsTypeRank.getValue()) {
+                checkResult = true;
+                break;
+            }
+        }
+        return checkResult;
+    }
+
+    private Map<String, Object> queryGoodsTypeMap(Map<String, Object> queryMap, GoodsTypeStatus goodsTypeStatus, String companyId) {
+        queryMap.put("status", goodsTypeStatus.getValue());
+        queryMap.put("companyId", companyId);
+        return queryMap;
+    }
+
+    /*
+     * 物资类型查询参数
+     */
+    private Map<String, Object> queryGoodsTypeByIdMap(Long id, GoodsTypeStatus goodsTypeStatus, String companyId) {
+        Map<String, Object> queryMap = new HashMap<String, Object>();
+        queryMap.put("id", id);
+        return queryGoodsTypeMap(queryMap, goodsTypeStatus, companyId);
+    }
+
+    /*
+     * 物资类型查询参数
+     */
+    private Map<String, Object> queryGoodsTypeByPidMap(Long pid, GoodsTypeStatus goodsTypeStatus, String companyId) {
+        Map<String, Object> queryMap = new HashMap<String, Object>();
+        queryMap.put("pid", pid);
+        return queryGoodsTypeMap(queryMap, goodsTypeStatus, companyId);
+    }
+
+    /*
+     * @Title: subtypeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsTypeDTO
+     * @return
+     * @see
+     * com.youzhicai.materialstore.service.GoodsTypeService#subtypeList(com.youzhicai.materialstore.dto.GoodsTypeDTO)
+     */
+    @Override
+    public List<GoodsTypeVO> subtypeList(GoodsTypeDTO goodsTypeDTO) {
+        Long pid;
+        String companyId;
+        if ((pid = goodsTypeDTO.getPid()) == null || StringUtils.isBlank(companyId = goodsTypeDTO.getCompanyId())
+                || (goodsTypeDAO.findGoodsTypeById(queryGoodsTypeByIdMap(pid, NORMAL, companyId)) == null && pid != 0)) {
+            return new ArrayList<>();
+        }
+
+        List<GoodsTypePO> goodsTypePOList = goodsTypeDAO.findSubtypeList(queryGoodsTypeByPidMap(pid, NORMAL, companyId));
+        List<GoodsTypeVO> goodsTypeDTOList = POUtil.convert(goodsTypePOList, GoodsTypeVO.class, TypeTokens.GoodsTypeVO);
+
+        return goodsTypeDTOList;
+    }
+
+    /*
+     * @Title: findGoodsTypeThirdRankMixByPage
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsTypePageDTO
+     * @return
+     * @see com.youzhicai.materialstore.service.GoodsTypeService#findThirdRankMixByPage(com.youzhicai.materialstore.
+     * dto.GoodsTypePageDTO)
+     */
+    @Override
+    public Page<GoodsTypeThirdRankMixVO> findThirdRankMixByPage(GoodsTypePageDTO goodsTypePageDTO) {
+        int pageNum;
+        int pageSize;
+        pageNum = (pageNum = goodsTypePageDTO.getPageNum()) > 0 ? pageNum : 1;
+        pageSize = (pageSize = goodsTypePageDTO.getPageSize()) > 0 ? pageSize : 10;
+
+        String companyId;
+        Map<String, Object> queryMap = new HashMap<String, Object>();
+        queryMap.put("start", (pageNum - 1) * pageSize);
+        queryMap.put("num", pageSize);
+        queryMap.put("firstId", goodsTypePageDTO.getFirstId());
+        queryMap.put("secondId", goodsTypePageDTO.getSecondId());
+        queryMap.put("thirdId", goodsTypePageDTO.getThirdId());
+        queryMap.put("companyId", StringUtils.isBlank(companyId = goodsTypePageDTO.getCompanyId()) ? "0" : companyId);
+        List<Map<String, Object>> findGoodsTypeThirdRankMixList = goodsTypeDAO.findThirdRankMixList(queryMap);
+        int totalNum = goodsTypeDAO.findThirdRankMixListCount(queryMap);
+
+        List<GoodsTypeThirdRankMixVO> list = POUtil.convert(findGoodsTypeThirdRankMixList, GoodsTypeThirdRankMixVO.class,
+                new TypeToken<List<GoodsTypeThirdRankMixVO>>() {
+                }.getType());
+
+        return new Page<GoodsTypeThirdRankMixVO>(pageNum, pageSize, totalNum, list);
+    }
+
+    /*
+     * 二 三级编码长度
+     */
+    private int digitsLength(int digits) {
+        int length = 0;
+        while (digits > 0) {
+            ++length;
+            digits = digits / 10;
+        }
+        return length;
+    }
+
+    /*
+     * 补全二 三级编码
+     */
+    private String complementCode(int newCode, int limit) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < (digitsLength(limit) - digitsLength(newCode)); i++) {
+            buffer.append("0");
+        }
+        buffer.append(newCode);
+        return buffer.toString();
+    }
+
+    /* 产生二 三级新编码 */
+    private String newCode(List<Integer> codes, GoodsTypeCode goodsTypeCode) {
+        Integer newCode = null;
+
+        if (codes == null || codes.isEmpty()) {
+            newCode = 1;
+        } else {
+            Integer[] array = codes.toArray(new Integer[] {});
+            Arrays.sort(array);
+            codes = Arrays.asList(array);
+
+            int size = codes.size();
+            for (int i = 0; i < size; i++) {
+                Integer code = codes.get(i);
+                if ((i + 1) != code) {
+                    newCode = i + 1;
+                    break;
+                }
+            }
+
+            if (newCode == null && size < goodsTypeCode.getLimit()) {
+                newCode = size + 1;
+            }
+        }
+
+        return newCode == null ? null : complementCode(newCode, goodsTypeCode.getLimit());
+    }
+
+    /*
+     * @Title: addThirdRank
+     * @Description: 添加三级物资分类
+     * @param goodsTypeDTO
+     * @return
+     * @see
+     * com.youzhicai.materialstore.service.GoodsTypeService#addThirdRank(com.youzhicai.materialstore.dto.GoodsTypeDTO)
+     */
+    @Transactional
+    @Override
+    public boolean addThirdRank(GoodsTypeDTO goodsTypeDTO) {
+        Long thirdId = addThirdRankInfo(goodsTypeDTO);
+        if (thirdId != null && thirdId > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * 添加三级物资分类
+     */
+    private Long addThirdRankInfo(GoodsTypeDTO goodsTypeDTO) {
+        Long thirdId = null;
+
+        Long secondId;
+        String thirdName;
+        if ((secondId = goodsTypeDTO.getSecondId()) == null || StringUtils.isBlank(thirdName = goodsTypeDTO.getThirdName())) {
+            return thirdId;
+        }
+
+        goodsTypeDTO.setPid(secondId);
+        goodsTypeDTO.setName(thirdName);
+        thirdId = saveGoodsType(goodsTypeDTO, GoodsTypeCode.THIRD, GoodsTypeRank.THIRD);
+
+        return thirdId;
+    }
+
+    /*
+     * @Title: addSecondRank
+     * @Description: 添加二级物资分类
+     * @param goodsTypeDTO
+     * @return
+     * @see
+     * com.youzhicai.materialstore.service.GoodsTypeService#addSecondRank(com.youzhicai.materialstore.dto.GoodsTypeDTO)
+     */
+    @Transactional
+    @Override
+    public boolean addSecondRank(GoodsTypeDTO goodsTypeDTO) {
+        Long secondId = addSecondRankInfo(goodsTypeDTO);
+        if (secondId != null && secondId > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * 添加二级物资分类
+     */
+    private Long addSecondRankInfo(GoodsTypeDTO goodsTypeDTO) {
+        Long secondId = null;
+
+        Long firstId;
+        String secondName;
+        if ((firstId = goodsTypeDTO.getFirstId()) == null || StringUtils.isBlank(secondName = goodsTypeDTO.getSecondName())) {
+            return secondId;
+        }
+
+        // 添加二级分类
+        goodsTypeDTO.setPid(firstId);
+        goodsTypeDTO.setName(secondName);
+        secondId = saveGoodsType(goodsTypeDTO, GoodsTypeCode.SECOND, GoodsTypeRank.SECOND);
+        if (secondId == null || secondId <= 0) {
+            return secondId;
+        }
+
+        // 添加三级分类
+        goodsTypeDTO.setSecondId(secondId);
+        Long thirdId = addThirdRankInfo(goodsTypeDTO);
+        if (thirdId == null || thirdId <= 0) {
+            // 抛出异常，回滚业务
+            throw new RuntimeException("二级分类添加异常！");
+        }
+
+        return secondId;
+    }
+
+    /*
+     * 保存物资分类
+     */
+    private Long saveGoodsType(GoodsTypeDTO goodsTypeDTO, GoodsTypeCode goodsTypeCode, GoodsTypeRank goodsTypeRank) {
+        Long newId = null;
+
+        // 参数判断
+        Long pid;
+        String name;
+
+        String companyId;
+        String companyName;
+        String createId;
+        String creator;
+        String newCode;
+
+        if ((pid = goodsTypeDTO.getPid()) == null || StringUtils.isBlank(name = goodsTypeDTO.getName())
+                || StringUtils.isBlank(companyId = goodsTypeDTO.getCompanyId()) || StringUtils.isBlank(companyName = goodsTypeDTO.getCompanyName())
+                || StringUtils.isBlank(createId = goodsTypeDTO.getCreateId()) || StringUtils.isBlank(creator = goodsTypeDTO.getCreator())
+                || (goodsTypeDAO.findGoodsTypeById(queryGoodsTypeByIdMap(pid, NORMAL, companyId)) == null && pid != 0) || StringUtils.isBlank(
+                        newCode = newCode(goodsTypeDAO.findSubtypeCodeList(queryGoodsTypeByPidMap(pid, NORMAL, companyId)), goodsTypeCode))) {
+            // 参数缺失，添加失败
+            return newId;
+        }
+
+        GoodsTypePO goodsTypePO = new GoodsTypePO();
+        goodsTypePO.setCompanyId(companyId);
+        goodsTypePO.setCompanyName(companyName);
+        goodsTypePO.setName(name);
+        goodsTypePO.setRank(goodsTypeRank.getValue());
+        goodsTypePO.setPid(pid);
+        goodsTypePO.setCode(newCode);
+        goodsTypePO.setStatus(NORMAL.getValue());
+
+        goodsTypePO.setCreateId(createId);
+        goodsTypePO.setCreator(creator);
+
+        if (goodsTypeDAO.save(goodsTypePO) > 0) {// 同企业 同父类下 分类名称及编码不可重复
+            newId = goodsTypePO.getId();
+        }
+
+        return newId;
+    }
+
+}

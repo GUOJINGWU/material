@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsTypeDAO">
+
+	<sql id="goodstype_columns_withoutID">
+		name, companyId, companyName, rank, pid, code, status, createId, creator, createTime, updateId, updator, updateTime
+	</sql>
+
+	<sql id="goodstype_columns">
+		id,
+		<include refid="goodstype_columns_withoutID" />
+	</sql>
+
+	<select id="findGoodsTypeById" resultType="com.youzhicai.materialstore.po.GoodsTypePO">
+		SELECT
+		<include refid="goodstype_columns" />
+		FROM goodstype WHERE id = #{id} AND companyId = #{companyId}
+		<if test="status != null and status != '' ">
+			AND status = #{status}
+		</if>
+	</select>
+
+	<select id="findSubtypeList" resultType="com.youzhicai.materialstore.po.GoodsTypePO">
+		SELECT
+		<include refid="goodstype_columns" />
+		FROM goodstype WHERE status = 1 AND pid = #{pid} AND companyId = #{companyId}
+	</select>
+
+	<!-- 新增 -->
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsTypePO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO goodstype
+		(
+		<include refid="goodstype_columns_withoutID" />
+		)
+		SELECT
+		#{name},#{companyId},#{companyName},#{rank},#{pid},#{code},#{status},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime}
+		FROM DUAL
+		WHERE NOT EXISTS(SELECT * FROM goodstype WHERE status =1 AND companyId = #{companyId} AND pid = #{pid} AND (name = #{name} OR code = #{code}) )
+	</insert>
+
+	<!-- 修改 -->
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsTypePO">
+		UPDATE goodstype
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="rank != null and rank != '' ">
+			,rank = #{rank}
+		</if>
+		<if test="pid != null and pid != '' ">
+			,pid = #{pid}
+		</if>
+		<if test="code != null and code != '' ">
+			,code = #{code}
+		</if>
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id} AND companyId = #{companyId}
+	</update>
+
+	<!-- 三级物资类型混合查询 -->
+	<select id="findThirdRankMixList" resultType="java.util.HashMap">
+		SELECT gt1.id AS firstId, gt1.name AS firstName, gt1.code AS firstCode,
+		gt2.id AS secondId, gt2.name AS secondName, gt2.code AS secondCode,
+		gt3.id AS
+		thirdId, gt3.name AS thirdName, gt3.code AS thirdCode,
+		gt3.creator, gt3.createTime
+		,(SELECT COUNT(1) FROM goods g WHERE g.status = 1 AND g.tid =
+		gt3.id) AS goodsCount
+		FROM goodstype gt3
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid
+		WHERE gt3.rank = 3 AND
+		gt3.status = 1 AND gt3.companyId = #{companyId}
+		<if test="firstId != null and firstId != '' ">
+			AND gt1.id = #{firstId}
+		</if>
+		<if test="secondId != null and secondId != '' ">
+			AND gt2.id = #{secondId}
+		</if>
+		<if test="thirdId != null and thirdId != '' ">
+			AND gt3.id = #{thirdId}
+		</if>
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.createTime DESC
+		LIMIT #{start},#{num}
+	</select>
+
+	<!-- 三级物资类型混合总量查询 -->
+	<select id="findThirdRankMixListCount" resultType="int">
+		SELECT count(1)
+		FROM goodstype gt3
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid
+		WHERE gt3.rank = 3 AND
+		gt3.status = 1 AND gt3.companyId = #{companyId}
+		<if test="firstId != null and firstId != '' ">
+			AND gt1.id = #{firstId}
+		</if>
+		<if test="secondId != null and secondId != '' ">
+			AND gt2.id = #{secondId}
+		</if>
+		<if test="thirdId != null and thirdId != '' ">
+			AND gt3.id = #{thirdId}
+		</if>
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.createTime DESC
+	</select>
+
+	<select id="findSubtypeCodeList" resultType="int">
+		SELECT code
+		FROM goodstype WHERE status = 1 AND pid = #{pid} AND companyId = #{companyId}
+	</select>
+	
+	<select id="findFirstRankSubtypeCodeList" resultType="java.lang.String">
+		SELECT code
+		FROM goodstype WHERE status = 1 AND pid = #{pid} AND companyId = #{companyId}
+	</select>
+	
+	<select id="findThirdRankOneByCodes" resultType="com.youzhicai.materialstore.po.GoodsTypePO">
+		SELECT gt3.* 
+		FROM goodstype gt3 
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid 
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid 
+		WHERE gt3.status = 1 AND gt2.status = 1 AND gt1.status = 1 
+		AND gt1.code = #{firstRankCode} AND gt2.code = #{secondRankCode} AND gt3.code = #{thirdRankCode} 
+		AND gt3.companyId = #{companyId} 
+	</select>
+	
+	<select id="findAllRankCodes" resultType="java.util.HashMap">
+		SELECT gt1.code AS firstRankCode,gt2.code AS secondRankCode,gt3.code AS thirdRankCode
+			  ,gt1.name AS firstRankName,gt2.name AS secondRankName,gt3.name AS thirdRankName 
+			  ,gt1.id AS firstRankId,gt2.id AS secondRankId,gt3.id AS thirdRankId  
+		FROM goodstype gt3
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid 
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid
+		WHERE gt3.status = 1 AND gt2.status = 1 AND gt1.status = 1
+		AND gt3.rank = 3 AND gt3.id = #{thirdRankId}
+		AND gt3.companyId = #{companyId} 
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.id ASC
+	</select>
+	
+	<select id="findThirdRankCodes" resultType="java.lang.Long">
+		SELECT gt3.id
+		FROM goodstype gt3 
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid 
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid 
+		WHERE gt3.status = 1 AND gt2.status = 1 AND gt1.status = 1 
+		<if test="firstRankId != null and firstRankId != '' ">
+			AND gt1.id = #{firstRankId}
+		</if>
+		<if test="secondRankId != null and secondRankId != '' ">
+			AND gt2.id = #{secondRankId}
+		</if>
+		<if test="thirdRankId != null and thirdRankId != '' ">
+			AND gt3.id = #{thirdRankId}
+		</if>
+		ORDER BY gt1.id ASC,gt2.id ASC,gt3.id ASC
+	</select>
+
+</mapper>   

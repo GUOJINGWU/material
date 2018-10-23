@@ -1,0 +1,83 @@
+/**  
+ * @Title: Assertion.java
+ * @Package com.youzhicai.materialstore.common.exception
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午7:55:28
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.common.exception;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @ClassName: Assertion
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午7:55:28
+ */
+public class Assertion {
+
+    private static Logger logger = LoggerFactory.getLogger(Assertion.class);
+
+    /*
+     * 空字符串判断
+     */
+    protected static boolean empty(String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if ((Character.isWhitespace(str.charAt(i)) == false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * 业务异常
+     */
+    protected static void throwBusinessException(Integer code, String msg) {
+        logger.error("[code]:{} [msg]:{} [cause]:{}", code, msg, Thread.currentThread().getStackTrace()[3]);
+        throw new BusinessException(code, msg);
+    }
+
+    /**
+     * @Title: ERROR
+     * @Description: 业务异常
+     * @param error
+     * @return void
+     */
+    public static void ERROR(Error error) {
+        throwBusinessException(error.getCode(), error.getMsg());
+    }
+
+    /**
+     * @Title: NULL
+     * @Description: 空值验证
+     * @param obj
+     * @return void
+     */
+    public static void NULL(Object obj) {
+        if (obj == null || (obj instanceof String && empty((String) obj))) {
+            throwBusinessException(Error.NULL.getCode(), Error.NULL.getMsg());
+        }
+    }
+
+    /**
+     * @Title: NULL
+     * @Description: 空值验证
+     * @param obj
+     * @param error
+     * @return void
+     */
+    public static void NULL(Object obj, Error error) {
+        if (obj == null || (obj instanceof String && empty((String) obj))) {
+            throwBusinessException(error.getCode(), error.getMsg());
+        }
+    }
+
+}

@@ -1,0 +1,20 @@
+
+<div style="padding: 20px;" id="dialog-content">
+    <!-- 弹窗dom请写在下面 -->
+    <div class="dialog-default" style="text-align: center;height: 300px">
+        <!-- 查看大图 -->
+        
+        <img src="../../res/images/credential.jpg" width="100%" height="100%"></img>
+    </div>
+</div>
+<!-- 按钮 -->
+<script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+    function closeBtn() {
+        //当你在iframe页面关闭自身时
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    }
+</script>

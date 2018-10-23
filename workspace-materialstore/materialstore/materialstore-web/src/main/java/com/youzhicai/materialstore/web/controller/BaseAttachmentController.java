@@ -1,0 +1,17 @@
+package com.youzhicai.materialstore.web.controller;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * 文件上传
+ * @ClassName: BaseAttachmentController
+ * @author: xia.nan
+ * @date: 2018年10月10日 下午5:30:10
+ */
+@Controller
+@RequestMapping(value = "baseattachment")
+public class BaseAttachmentController {
+
+}

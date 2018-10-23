@@ -1,0 +1,143 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>watchBigPic</title>
+<link href="//cdn.ukzhicai.com/layui/css/layui.css" rel="stylesheet" type="text/css" />
+ <link rel="stylesheet" href="../../res/css/global.css"></link>
+ <link rel="stylesheet" href="../../res/css/source.css"></link>
+<script type="text/javascript" src="//cdn.youzhicai.com/layui/layui.js"></script>
+<script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+<link rel="stylesheet" th:href="@{/res/css/material.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/dialog-content.css}" />
+</head>
+<body>
+	<div class="inner-content padding-20 yzc-clearfix">
+		
+		<form  class="layui-form" action="" style="padding-top: 20px;min-height: 245px;">
+									<div class="layui-form-item material-item">
+										<label class="material-label">
+											<span class="red-star">*</span>
+											添加级别：
+										</label>
+										<div class="layui-input-block" style="margin-left: 0px; display: inline-block;">
+											<input type="radio" name="type" lay-filter="first-type"  title="添加一级分类"  />
+											<input type="radio" name="type" lay-filter="second-type"  title="添加二级分类" />
+											<input type="radio" name="type" lay-filter="third-type"  title="添加三级分类" />
+										</div>
+									</div>
+									<div class="layui-form-item material-item material-add-type"  style="display:none;">
+										
+									
+										<div class="layui-inline type-choose" style="margin-bottom:20px;position: relative;">
+											<label class="material-label type-label-one">
+												
+												一级分类：
+											</label>
+											<div class="layui-input-block  layui-input2  type-input-one" style="margin-left: 0px !important; display: inline-block; width: 240px">
+												<input lay-verify="title" autocomplete="off" class="layui-input  input-clear select-type-input" placeholder="请输入一级分类" type="text" style="width: 240px; display: inline-block;" />
+												<input name="tid" id="tid" type="hidden"/>
+											</div>
+											<div class="layui-input-inline type-select-one" style="display:none;float:right;margin-left: 4px;width:240px"> 
+														<select  class="" lay-filter="first">
+															<option value="1">请选择一级分类</option>
+														</select>
+											</div>	
+																						
+										</div>
+										<div class="layui-inline type-choose" style="margin-bottom:20px;position: relative;">
+											<label class="material-label type-label-two">
+												
+												二级分类：
+											</label>
+											<div class="layui-input-block  layui-input2  type-input-two" style="margin-left: 0px !important; display: inline-block; width: 240px">
+												<input lay-verify="title" autocomplete="off" class="layui-input  input-clear select-type-input" placeholder="请输入二级分类" type="text" style="width: 240px; display: inline-block;" />
+												<input name="tid" id="tid" type="hidden"/>
+											</div>
+											<div class="layui-input-inline type-select-two" style="display:none;float:right;margin-left: 4px;width:240px"> 
+														<select  class="" lay-filter="second">
+															<option value="1">请选择二级分类</option>
+														</select>
+											</div>
+											
+											
+																						
+										</div>
+										<div class="layui-inline type-choose" style="margin-bottom:20px;position: relative;">
+											<label class="material-label">
+												
+												三级分类：
+											</label>
+											<div class="layui-input-block  layui-input2 showform material-input-block" style="margin-left: 0px !important; display: inline-block; width: 240px">
+												<input lay-verify="title" autocomplete="off" class="layui-input  input-clear select-type-input" placeholder="请输入三级分类" type="text" style="width: 240px; display: inline-block;" />
+												<input name="tid" id="tid" type="hidden"/>
+											</div>
+																						
+										</div>
+										
+										
+									</div>
+									
+									
+									
+									
+								</form>
+								<p class="button-group-c">
+									<a class="material-reset-btn material-margin-btn cancel-btn">取消</a>
+									<a class="material-sure-btn material-sure-submit" >确定</a>
+								</p>
+		
+	</div>
+	
+	
+	<script>
+	layui.use(['form', 'layedit', 'laydate'], function(){
+		var form = layui.form()
+		,layer = layui.layer
+		,layedit = layui.layedit
+		,laydate = layui.laydate;
+
+		/* 点击添加一级分类 */
+		form.on('radio(first-type)', function(data){
+			
+			$(".material-add-type").show();
+			$(".type-select-one").hide();
+			$(".type-select-two").hide();
+			$(".type-input-one").show();
+			$(".type-input-two").show();
+			$(".type-label-one").css("top","0");
+			$(".type-label-two").css("top","0");
+			
+		}); 
+		/* 点击添加二级分类 */
+		form.on('radio(second-type)', function(data){
+			$(".type-input-one").hide();
+			$(".type-select-one").show();
+			$(".type-input-two").show();
+			$(".type-select-two").hide();
+			$(".type-label-one").css("top","7px");
+			$(".type-label-two").css("top","0");
+			
+		}); 
+		/* 点击添加三级分类 */
+		form.on('radio(third-type)', function(data){
+			$(".type-input-one").hide();
+			$(".type-select-one").show();
+			$(".type-input-two").hide();
+			$(".type-select-two").show();
+			$(".type-label-two").css("top","7px");
+			
+		}); 
+			
+		/* 重新渲染	 */
+		form.render('radio'); 
+		
+	  
+	});
+	/* 点击取消按钮关闭弹窗 */
+	$(".cancel-btn").click(function() {
+		top.CloseDialog("add-type");
+	});
+	</script>
+	
+</body>
+</html>

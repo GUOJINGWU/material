@@ -1,0 +1,58 @@
+/**  
+ * @Title: GoodsDAO.java
+ * @Package com.youzhicai.materialstore.dao
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午4:48:06
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youzhicai.materialstore.po.GoodsPO;
+
+/**
+ * @ClassName: GoodsDAO
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午4:48:06
+ */
+public interface GoodsDAO {
+
+    /**
+     * @Title: save
+     * @Description: 保存物资信息
+     * @param goodsPO
+     * @return int
+     */
+    public int save(GoodsPO goodsPO);
+
+    /**
+     * @Title: modify
+     * @Description: 修改物资信息
+     * @param goodsPO
+     * @return int
+     */
+    public int modify(GoodsPO goodsPO);
+
+    /**
+     * @Title: findOneById
+     * @Description: 查询单条物资信息
+     * @param id
+     * @return GoodsPO
+     */
+    public GoodsPO findOneById(long id);
+
+    /**
+     * @Title: findSubCodeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryMap
+     * @return List<Integer>
+     */
+    public List<Integer> findSubCodeList(Map<String, Object> queryMap);
+
+    public GoodsPO findOneByTidAndCode(Map<String, Object> queryMap);
+
+}

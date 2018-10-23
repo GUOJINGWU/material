@@ -1,0 +1,39 @@
+/**  
+ * @Title: GoodsController.java
+ * @Package com.youzhicai.materialstore.web.controller
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午4:40:44
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.controller;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.youzhicai.materialstore.api.GoodsAPI;
+import com.youzhicai.materialstore.dto.GoodsDTO;
+
+/**
+ * @ClassName: GoodsController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午4:40:44
+ */
+@Controller
+@RequestMapping("web/goods")
+public class GoodsController {
+
+    @Autowired
+    private GoodsAPI goodsAPI;
+
+    @RequestMapping(value = "nextGoodsCode")
+    public String nextGoodsCode(GoodsDTO goodsDTO) {
+        Map<String, Object> nextGoodsCode = goodsAPI.nextGoodsCode(goodsDTO);
+        return (String) nextGoodsCode.get("code");
+    }
+
+}

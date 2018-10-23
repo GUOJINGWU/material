@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsSupplyDAO">
+
+	<sql id="goodssupply_columns_withoutID">
+		gid, style, name, value, status, createId, creator, createTime, updateId, updator, updateTime
+	</sql>
+
+	<sql id="goodssupply_columns">
+		id,
+		<include refid="goodssupply_columns_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO goodssupply
+		(
+		<include refid="goodssupply_columns_withoutID" />
+		)
+		SELECT
+		#{gid},#{style},#{name},#{value},1,#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime}
+		FROM DUAL
+		WHERE NOT EXISTS(SELECT
+		id FROM goodssupply WHERE status = 1 AND gid = #{gid} AND name = #{name} AND style = #{style} )
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		UPDATE goodssupply
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="value != null and value != '' ">
+			,value = #{value}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id} AND gid = #{gid} AND style = #{style}
+	</update>
+
+	<select id="findListByGid" resultType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		SELECT
+		<include refid="goodssupply_columns" />
+		FROM goodssupply
+		WHERE gid = #{gid}
+		AND status = 1 
+		<if test="style != null and style != '' ">
+			AND style = #{style}
+		</if>
+		ORDER BY id,style ASC
+	</select>
+
+	<select id="findOneById" resultType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		SELECT
+		<include refid="goodssupply_columns" />
+		FROM goodssupply
+		WHERE id = #{id} AND gid = #{gid} AND status = 1 
+	</select>
+	
+	<select id="findOneByFull" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO" resultType="java.lang.Long">
+		SELECT id
+		FROM goodssupply
+		WHERE gid = #{gid} AND style = #{style} AND name = #{name} AND value = #{value} AND status = 1 
+		LIMIT 1
+	</select>
+	
+	<update id="delete" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		UPDATE goodssupply
+		SET status = 0, updateTime = NOW(), updateId = #{updateId}, updator = #{updator} 
+		WHERE id = #{id}
+	</update>
+
+	<update id="deleteByGid" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		UPDATE goodssupply
+		SET status = 0, updateTime = NOW(), updateId = #{updateId}, updator = #{updator} 
+		WHERE gid = #{gid} 
+	</update>
+
+	<update id="deleteByGidExclude" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		UPDATE goodssupply
+		SET status = 0, updateTime = NOW(), updateId = #{updateId}, updator = #{updator} 
+		WHERE gid = #{gid} AND id NOT IN 
+			<foreach item="item" collection="ableSupplyIds" separator="," open="(" close=")" index="">
+	      		#{item}
+	    	</foreach>
+	</update>
+
+</mapper>   

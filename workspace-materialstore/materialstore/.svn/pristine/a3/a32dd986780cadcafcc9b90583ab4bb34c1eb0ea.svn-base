@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsDAO">
+
+	<sql id="goods_columns_withoutID">
+		name, companyId, companyName, code, tid, unit, brand, specifications, remarks, link, status, createId, creator, createTime, updateId,
+		updator, updateTime
+	</sql>
+
+	<sql id="goods_columns">
+		id,
+		<include refid="goods_columns_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsPO">
+		INSERT INTO goods
+		(
+		<include refid="goods_columns_withoutID" />
+		)
+		VALUES(#{name},#{companyId},#{companyName},#{code},#{tid},#{unit},#{brand},#{specifications},#{remarks},#{link},#{status},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime})
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsPO">
+		UPDATE goods
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="code != null and code != '' ">
+			,code = #{code}
+		</if>
+		<if test="code != null and code != '' ">
+			,tid = #{tid}
+		</if>
+		<if test="unit != null and unit != '' ">
+			,unit = #{unit}
+		</if>
+		<if test="brand != null and brand != '' ">
+			,brand = #{brand}
+		</if>
+		<if test="specifications != null and specifications != '' ">
+			,specifications = #{specifications}
+		</if>
+		<if test="remarks != null and remarks != '' ">
+			,remarks = #{remarks}
+		</if>
+		<if test="link != null and link != '' ">
+			,link = #{link}
+		</if>
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id}
+	</update>
+
+	<select id="findOneById" resultType="com.youzhicai.materialstore.po.GoodsPO">
+		SELECT
+		<include refid="goods_columns" />
+		FROM goods
+		WHERE id = #{id}
+	</select>
+
+</mapper>

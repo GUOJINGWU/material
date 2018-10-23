@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.TypeUserDAO">
+
+	<sql id="typeuser_columns_withoutID">
+		companyId, companyName, tid, uid, status, createId, creator, createTime, updateId, updator, updateTime
+	</sql>
+
+	<sql id="typeuser_columns">
+		id,
+		<include refid="typeuser_columns_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.TypeUserPO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO typeuser
+		(
+		<include refid="typeuser_columns_withoutID" />
+		)
+		SELECT
+		#{companyId},#{companyName},#{tid},#{uid},#{status},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime}
+		FROM DUAL
+		WHERE NOT
+		EXISTS(SELECT * FROM typeuser WHERE status = 1 AND companyId = #{companyId} AND tid = #{tid} AND uid = #{uid} )
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.TypeUserPO">
+		UPDATE typeuser
+		SET updateTime = NOW()
+		<if test="tid != null and tid != '' ">
+			,tid = #{tid}
+		</if>
+		<if test="uid != null and uid != '' ">
+			,uid = #{uid}
+		</if>
+		<if test="status != null and status != '' ">
+			,status = #{status}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id}
+	</update>
+
+	<select id="findOneById" resultType="com.youzhicai.materialstore.po.TypeUserPO">
+		SELECT
+		<include refid="typeuser_columns" /> 
+		FROM typeuser
+		WHERE id = #{id}
+	</select>
+
+	<select id="findByTidAndUid" resultType="com.youzhicai.materialstore.po.TypeUserPO">
+		SELECT 
+		<include refid="typeuser_columns" /> 
+		FROM typeuser 
+		WHERE status = 1 
+		<if test="tid != null and tid != '' ">
+			AND tid = #{tid} 
+		</if>
+		<if test="uid != null and uid != '' ">
+			AND uid = #{uid} 
+		</if>
+	</select>
+
+</mapper>

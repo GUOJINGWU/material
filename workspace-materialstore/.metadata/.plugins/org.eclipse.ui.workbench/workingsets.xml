@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1538211883068_1" label="materialstore" name="materialstore">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore-api" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore-web" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore-dependencies" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore-business" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/materialstore-service" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1538211401496_0" label="Window Working Set" name="Aggregate for window 1538211401496"/>
+</workingSetManager>

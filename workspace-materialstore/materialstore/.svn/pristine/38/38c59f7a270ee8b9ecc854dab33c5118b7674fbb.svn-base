@@ -1,0 +1,200 @@
+/**  
+ * @Title: GoodsController.java
+ * @Package com.youzhicai.materialstore.web.controller
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午4:40:44
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.youzhicai.materialstore.api.GoodsAPI;
+import com.youzhicai.materialstore.api.GoodsTypeAPI;
+import com.youzhicai.materialstore.common.exception.BusinessException;
+import com.youzhicai.materialstore.dto.GoodsApproveDTO;
+import com.youzhicai.materialstore.dto.GoodsDTO;
+import com.youzhicai.materialstore.dto.GoodsSupplyDTO;
+import com.youzhicai.materialstore.dto.GoodsTypeDTO;
+import com.youzhicai.materialstore.handler.Page;
+import com.youzhicai.materialstore.vo.GoodsSearchVO;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+import com.youzhicai.materialstore.web.api.transfer.TransferType;
+import com.youzhicai.materialstore.web.model.GoodsAddModel;
+import com.youzhicai.materialstore.web.model.GoodsTypeSubTypeModel;
+
+/**
+ * @ClassName: GoodsController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月9日 下午4:40:44
+ */
+@Controller
+@RequestMapping("web/goods")
+public class GoodsController {
+
+    @Autowired
+    private GoodsAPI goodsAPI;
+
+    @Autowired
+    private GoodsTypeAPI goodsTypeAPI;
+
+    @RequestMapping(value = "nextGoodsCode")
+    @ResponseBody
+    public Object nextGoodsCode(@RequestBody GoodsTypeSubTypeModel goodsTypeSubTypeModel) {
+        GoodsDTO goodsDTO = new GoodsDTO();
+        goodsDTO.setTid(goodsTypeSubTypeModel.getPid());
+        goodsDTO.setCompanyId("123456");
+        Map<String, Object> nextGoodsCode = goodsAPI.nextGoodsCode(goodsDTO);
+        return nextGoodsCode;
+    }
+
+    @RequestMapping("materialtable")
+    public String materialTable(Model model) {
+        System.out.println("================start==============");
+
+        // 查询物资分页列表
+        GoodsDTO goodsDTO = new GoodsDTO();
+        goodsDTO.setPageNum(1);
+        goodsDTO.setPageSize(5);
+        goodsDTO.setCompanyId("123456");
+        Page<GoodsSearchVO> searchList = goodsAPI.findGoodsListForSearch(goodsDTO);
+        model.addAttribute("searchList", searchList);
+
+        // 查询启用物资及停用物资数量
+        Map<String, Object> usedOrNotCount = goodsAPI.countForUsedOrNot(goodsDTO);
+        model.addAttribute("usedOrNotCount", usedOrNotCount);
+
+        System.out.println("================end==============");
+
+        return "materialTable/materialTable";
+    }
+
+    @RequestMapping("toaddmaterial")
+    public String toAddMaterial(Model model) {
+        // 一级菜单
+        GoodsTypeDTO firstGoodsTypeDTO = new GoodsTypeDTO();
+        firstGoodsTypeDTO.setCompanyId("123456");
+        firstGoodsTypeDTO.setPid(0L);
+        List<GoodsTypeVO> firstRankTypes = goodsTypeAPI.subtypeList(firstGoodsTypeDTO);
+        model.addAttribute("firstRankTypes", firstRankTypes);
+
+        return "materialAdd/materialAdd";
+    }
+
+    @RequestMapping(value = "addmaterial", method = RequestMethod.POST)
+    @ResponseBody
+    public Object addMaterial(@RequestBody GoodsAddModel goodsAddModel) {
+        // 物资信息
+        GoodsDTO goodsDTO = new GoodsDTO();
+        goodsDTO.setBrand(goodsAddModel.getBrand());
+        goodsDTO.setCode(goodsAddModel.getCode());
+        goodsDTO.setLink(goodsAddModel.getLink());
+        goodsDTO.setName(goodsAddModel.getName());
+        goodsDTO.setRemarks(goodsAddModel.getRemarks());
+        goodsDTO.setSpecifications(goodsAddModel.getSpecifications());
+        goodsDTO.setTid(goodsAddModel.getTid());
+        goodsDTO.setUnit(goodsAddModel.getUnit());
+        goodsDTO.setUsed(goodsAddModel.getUsed());
+
+        // 扩展属性
+        List<GoodsSupplyDTO> goodsSupplys = new ArrayList<GoodsSupplyDTO>();
+        List<String> supplyNames;
+        List<String> supplyValues;
+        if ((supplyNames = goodsAddModel.getSupplyNames()) != null && !supplyNames.isEmpty()
+                && (supplyValues = goodsAddModel.getSupplyValues()) != null && !supplyValues.isEmpty()) {
+            if (supplyNames.size() == supplyValues.size()) {
+                for (int i = 0; i < supplyNames.size(); i++) {
+                    goodsSupplys.add(new GoodsSupplyDTO(1, supplyNames.get(i), supplyValues.get(i)));
+                }
+                goodsDTO.setGoodsSupplys(goodsSupplys);
+            } else {
+                // 异常
+            }
+        }
+
+        // 图片
+        List<String> imgNames;
+        List<String> imgValues;
+        if ((imgNames = goodsAddModel.getImgNames()) != null && !imgNames.isEmpty() && (imgValues = goodsAddModel.getImgValues()) != null
+                && !imgValues.isEmpty()) {
+            for (int i = 0; i < imgNames.size(); i++) {
+                goodsSupplys.add(new GoodsSupplyDTO(2, imgNames.get(i), imgValues.get(i)));
+            }
+        }
+
+        // 审核信息
+        GoodsApproveDTO goodsApproveDTO = new GoodsApproveDTO();
+        goodsApproveDTO.setStatus(goodsAddModel.getApproveStatus());
+        goodsDTO.setGoodsApprove(goodsApproveDTO);
+
+        goodsDTO.setCompanyId("123456");
+        goodsDTO.setCompanyName("铜化测试");
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        boolean addGoods = false;
+        Integer errCode = 1000;
+        String errMsg = "";
+
+        Long newGoodsIdParam;
+        if ((newGoodsIdParam = goodsAddModel.getNewGoodsId()) != null && newGoodsIdParam > 0) {
+            // 修改操作
+            goodsDTO.setNewGoodsId(newGoodsIdParam);
+            try {
+                addGoods = goodsAPI.modifyGoods(goodsDTO);
+            } catch (Exception e) {
+                if (e instanceof BusinessException) {
+                    errCode = ((BusinessException) e).getCode();
+                    errMsg = ((BusinessException) e).getMsg();
+                    System.out.println("code:" + errCode + "  " + "msg:" + ((BusinessException) e).getMsg());
+                } else {
+                    errCode = TransferType.ERROR.getCode();
+                    errMsg = TransferType.ERROR.getMsg();
+                }
+                e.printStackTrace();
+            }
+        } else {
+            // 新增
+            long newGoodsId = 0L;
+            try {
+                newGoodsId = goodsAPI.addGoods(goodsDTO);
+            } catch (Exception e) {
+                if (e instanceof BusinessException) {
+                    errCode = ((BusinessException) e).getCode();
+                    errMsg = ((BusinessException) e).getMsg();
+                    System.out.println("code:" + errCode + "  " + "msg:" + ((BusinessException) e).getMsg());
+                } else {
+                    errCode = TransferType.ERROR.getCode();
+                    errMsg = TransferType.ERROR.getMsg();
+                }
+                e.printStackTrace();
+            }
+            if (newGoodsId > 0L) {
+                addGoods = true;
+                result.put("newGoodsId", newGoodsId);
+            }
+        }
+
+        System.out.println(JSON.toJSON(goodsAddModel));
+
+        result.put("addStatus", addGoods);
+        result.put("errCode", errCode);
+        result.put("errMsg", errMsg);
+
+        return result;
+    }
+
+}

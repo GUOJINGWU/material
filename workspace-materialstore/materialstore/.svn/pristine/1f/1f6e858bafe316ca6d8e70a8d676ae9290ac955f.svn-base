@@ -1,0 +1,26 @@
+/**  
+ * @Title: TypeUserAPI.java
+ * @Package com.youzhicai.materialstore.api
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月10日 下午7:22:54
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.api;
+
+import java.util.List;
+
+import com.youzhicai.materialstore.dto.TypeUserDTO;
+import com.youzhicai.materialstore.vo.TypeUserVO;
+
+/**
+ * @ClassName: TypeUserAPI
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月10日 下午7:22:54
+ */
+public interface TypeUserAPI {
+
+    public Object findList(TypeUserDTO typeUserDTO);
+    
+}

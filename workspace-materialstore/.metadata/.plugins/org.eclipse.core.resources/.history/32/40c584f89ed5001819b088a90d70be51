@@ -1,0 +1,126 @@
+.add-member-title{
+    font-size: 18px;
+    width: 150px;
+    text-align: center;
+    margin: 10px auto 20px;
+    border-bottom: 2px solid #666666;
+  
+}
+.label-left{
+    display: inline-block;
+    text-align: right;
+    width: 100px;
+   
+}
+.plan-a{
+    color: #2d8ff7 !important;
+    cursor: pointer;
+}
+
+.plan-a:hover{
+    color: #2d8ff7 !important;
+}
+.inner-content{
+	padding:10px;
+	position:relative;
+	background-color:#fff;
+	height:100%;
+	box-sizing: border-box;
+}
+.plan-margin-btn {
+    margin-right: 45px;
+}
+.plan-white-btn {
+    padding: 8px 28px;
+    height: 32px;
+    line-height: 30px;
+    border-radius: 2px;
+    border: solid 1px #2d8ff7;
+    color: #2d8ff7;
+    background: #FFF;
+    cursor: pointer;
+}
+.plan-white-btn:hover{
+    background-color: #2d8ff7;
+    color: #fff;
+}
+.plan-blue-btn {
+    padding: 8px 28px;
+    height: 32px;
+    line-height: 30px;
+    background-color: #2d8ff7;
+    border-radius: 2px;
+    border: solid 1px #2d8ff7;
+    color: #fff;
+    cursor: pointer;
+}
+.plan-blue-btn:hover{
+    opacity: 0.9;
+    filter:alpha(opacity=90);
+    color: #fff;
+}
+.button-group-c{
+	text-align: center;
+	
+}
+
+.button-group{
+	text-align: center;
+	margin-top:53px;
+}
+
+
+.btn-numbox {
+    overflow: hidden;
+    margin-top: 9px;
+    padding-left: 20px;
+}
+
+.yzc-aCenter{
+	text-align: center !important;
+}
+.yzc-fr{
+	float: right;
+}
+.yzc-fl{
+	float: left;
+}
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+   
+   background-color: #2d8ff7 !important;
+}
+.yzc-clearfix {
+    zoom: 1;
+}
+.yzc-clearfix:after {
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0;
+}
+.close-btn{
+	padding: 0px 28px;
+    height: 32px;
+    line-height: 30px;
+    border-radius: 2px;
+    border: solid 1px #2d8ff7;
+    color: #2d8ff7;
+    background: #FFF;
+    cursor: pointer;
+    position:absolute;
+    bottom: -54px;
+    left: 246px;
+    
+}
+
+.big-pic{
+	width: 532px;
+    height: 328px;
+	display: block;
+    margin: 0 auto;
+}
+
+.material-add-type{
+	margin-left:60px;
+}

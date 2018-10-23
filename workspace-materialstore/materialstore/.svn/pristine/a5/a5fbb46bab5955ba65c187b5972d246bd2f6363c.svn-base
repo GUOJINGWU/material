@@ -1,0 +1,48 @@
+/**  
+ * @Title: GoodsTypeController.java
+ * @Package com.youzhicai.materialstore.web.controller
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月19日 下午3:24:40
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.youzhicai.materialstore.api.GoodsTypeAPI;
+import com.youzhicai.materialstore.dto.GoodsTypeDTO;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+import com.youzhicai.materialstore.web.model.GoodsTypeSubTypeModel;
+
+/**
+ * @ClassName: GoodsTypeController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月19日 下午3:24:40
+ */
+@Controller
+@RequestMapping("web/goodstype")
+public class GoodsTypeController {
+
+    @Autowired
+    private GoodsTypeAPI goodsTypeApi;
+
+    @RequestMapping(value = "subtypeList", method = RequestMethod.POST)
+    @ResponseBody
+    public Object subtypeList(@RequestBody GoodsTypeSubTypeModel goodsTypeSubTypeModel) {
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setPid(goodsTypeSubTypeModel.getPid());
+        goodsTypeDTO.setCompanyId("123456");
+        List<GoodsTypeVO> subtypeList = goodsTypeApi.subtypeList(goodsTypeDTO);
+        return subtypeList;
+    }
+
+}

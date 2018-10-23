@@ -1,0 +1,123 @@
+/**  
+ * @Title: GoodsTypeServiceImpl.java
+ * @Package com.youzhicai.materialstore.service.impl
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:15:23
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.youzhicai.materialstore.common.constant.GoodsTypeRank;
+import com.youzhicai.materialstore.common.constant.TypeTokens;
+import com.youzhicai.materialstore.common.util.POUtil;
+import com.youzhicai.materialstore.dao.GoodsTypeDAO;
+import com.youzhicai.materialstore.dto.GoodsTypePageDTO;
+import com.youzhicai.materialstore.handler.Page;
+import com.youzhicai.materialstore.po.GoodsTypePO;
+import com.youzhicai.materialstore.service.GoodsTypeService;
+import com.youzhicai.materialstore.vo.GoodsTypeThirdRankMixVO;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+
+/**
+ * @ClassName: GoodsTypeServiceImpl
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:15:23
+ */
+@Service
+public class GoodsTypeServiceImpl implements GoodsTypeService {
+
+    @Autowired
+    private GoodsTypeDAO goodsTypeDAO;
+
+    /*
+     * 校验物资类型级别
+     */
+    private boolean checkGoodsTypeRank(int rank) {
+        boolean checkResult = false;
+        for (GoodsTypeRank goodsTypeRank : GoodsTypeRank.values()) {
+            if (rank == goodsTypeRank.getValue()) {
+                checkResult = true;
+                break;
+            }
+        }
+        return checkResult;
+    }
+
+    /*
+     * @Title: subtypeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param typeId
+     * @param depth
+     * @return List<GoodsTypeVO>
+     * @see com.youzhicai.materialstore.service.GoodsTypeService#subtypeList(int, int)
+     */
+    @Override
+    public List<GoodsTypeVO> subtypeList(long typeId, int depth) {
+        if (!checkGoodsTypeRank(depth)) {
+            return new ArrayList<>();
+        }
+
+        List<GoodsTypePO> goodsTypePOList = goodsTypeDAO.findSubtypeList(typeId);
+        List<GoodsTypeVO> goodsTypeDTOList = POUtil.convert(goodsTypePOList, GoodsTypeVO.class, TypeTokens.GoodsTypeVO);
+
+        if (goodsTypeDTOList != null && (!goodsTypeDTOList.isEmpty()) && depth > GoodsTypeRank.FIRST.getValue()) {
+            for (GoodsTypeVO goodsTypeVO : goodsTypeDTOList) {
+                List<GoodsTypeVO> firstSubGoodsTypeList = POUtil.convert(goodsTypeDAO.findSubtypeList(goodsTypeVO.getId()), GoodsTypeVO.class,
+                        TypeTokens.GoodsTypeVO);
+                if (depth > GoodsTypeRank.SECOND.getValue()) {
+                    for (GoodsTypeVO firstSubGoodsType : firstSubGoodsTypeList) {
+                        firstSubGoodsType.setSubGoodsTypeList(
+                                POUtil.convert(goodsTypeDAO.findSubtypeList(firstSubGoodsType.getId()), GoodsTypeVO.class, TypeTokens.GoodsTypeVO));
+                    }
+                }
+                goodsTypeVO.setSubGoodsTypeList(firstSubGoodsTypeList);
+            }
+        }
+
+        return goodsTypeDTOList;
+    }
+
+    /*
+     * @Title: findGoodsTypeThirdRankMixByPage
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsTypePageDTO
+     * @return
+     * @see com.youzhicai.materialstore.service.GoodsTypeService#findThirdRankMixByPage(com.youzhicai.materialstore.
+     * dto.GoodsTypePageDTO)
+     */
+    @Override
+    public Page<GoodsTypeThirdRankMixVO> findThirdRankMixByPage(GoodsTypePageDTO goodsTypePageDTO) {
+        int pageNum;
+        int pageSize;
+        pageNum = (pageNum = goodsTypePageDTO.getPageNum()) > 0 ? pageNum : 1;
+        pageSize = (pageSize = goodsTypePageDTO.getPageSize()) > 0 ? pageSize : 10;
+
+        Map<String, Object> queryMap = new HashMap<String, Object>();
+        queryMap.put("start", (pageNum - 1) * pageSize);
+        queryMap.put("num", pageSize);
+        queryMap.put("firstId", goodsTypePageDTO.getFirstId());
+        queryMap.put("secondId", goodsTypePageDTO.getSecondId());
+        queryMap.put("thirdId", goodsTypePageDTO.getThirdId());
+
+        List<Map<String, Object>> findGoodsTypeThirdRankMixList = goodsTypeDAO.findThirdRankMixList(queryMap);
+
+        List<GoodsTypeThirdRankMixVO> list = POUtil.convert(findGoodsTypeThirdRankMixList, GoodsTypeThirdRankMixVO.class,
+                new TypeToken<List<GoodsTypeThirdRankMixVO>>() {
+                }.getType());
+        int totalNum = goodsTypeDAO.findThirdRankMixListCount(queryMap);
+
+        return new Page<GoodsTypeThirdRankMixVO>(pageNum, pageSize, totalNum, list);
+    }
+
+}

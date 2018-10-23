@@ -1,0 +1,107 @@
+/**  
+ * @Title: GoodsApprove.java
+ * @Package com.youzhicai.materialstore.entity
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月11日 上午11:10:26
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.entity;
+
+import java.util.Date;
+
+/**
+ * @ClassName: GoodsApprove
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月11日 上午11:10:26
+ */
+public class GoodsApprove {
+
+    /* 主键ID */
+    protected Long id;
+
+    /* 物资ID */
+    protected Long gid;
+
+    /* 审批状态:1 正常(审核通过), 10 未提交, 11 审核中, 13 不通过 */
+    protected Integer status;
+
+    /* 审批意见 */
+    protected String remarks;
+
+    /* 审批人ID */
+    protected String uid;
+
+    /* 审批人 */
+    protected String user;
+
+    /* 审批时间 */
+    protected Date time;
+
+    public GoodsApprove() {
+        super();
+    }
+
+    public GoodsApprove(Integer status) {
+        super();
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getGid() {
+        return gid;
+    }
+
+    public void setGid(Long gid) {
+        this.gid = gid;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+}

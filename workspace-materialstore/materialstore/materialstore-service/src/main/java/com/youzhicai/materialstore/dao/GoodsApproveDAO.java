@@ -1,0 +1,27 @@
+/**  
+ * @Title: GoodsApproveDAO.java
+ * @Package com.youzhicai.materialstore.dao
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月11日 下午1:47:35
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.dao;
+
+import com.youzhicai.materialstore.po.GoodsApprovePO;
+
+/**
+ * @ClassName: GoodsApproveDAO
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月11日 下午1:47:35
+ */
+public interface GoodsApproveDAO {
+
+    public int save(GoodsApprovePO goodsApprovePO);
+
+    public GoodsApprovePO findByGid(long gid);
+    
+    public int modify(GoodsApprovePO goodsApprovePO);
+
+}

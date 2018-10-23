@@ -1,0 +1,797 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>物资分类管理</title>
+<link rel="stylesheet" th:href="@{/res/layui/css/layui.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/global.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/source.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/ui-dialog.css}" />
+<link rel="stylesheet" th:href="@{/res/css/material.css}"></link>
+</head>
+<div th:include="default/yzcheader :: header"></div>
+<body class="yzc-skin-buyer">
+	<div class="yzc-frame-loading"></div>
+	<div class="yzc-frame-top"></div>
+	<div class="yzc-frame-center">
+		<div class="yzc-frame-right">
+			<div class="yzc-frame-body">
+				<div class="main-container">
+					<div class="main-con-form source">
+						<div class="layui-tab layui-tab-card" lay-filter="supply" style="margin: 0px;">
+							<div class="yui-title-c yui-clearfix">
+								<h4 class="yui-title-first yui-fl">物资分类管理</h4>
+								<a class="material-blue-btn new-add-btn" href="/web/goods/toaddmaterial">+新增物资</a>
+								<a class="material-white-btn import-btn" href="#">导入</a>
+							</div>
+							<div class="layui-tab layui-tab-brief source-padding material-tab-content" style="position: relative; margin: 0px;">
+								<input type="hidden" id="usedStatus" value="1"/>
+								<ul class="layui-tab-title yzc-clearfix">
+									<li class="usedCla layui-this" used="1">
+										启用物资（
+										<span id="usedNum" th:text="${usedOrNotCount.usedCount}"></span>
+										）
+									</li>
+									<li class="usedCla " used="0">
+										停用物资（
+										<span id="unUsedNum" th:text="${usedOrNotCount.unUsedCount}"></span>
+										）
+									</li>
+								</ul>
+								<div class="layui-tab-content">
+									<div class="layui-tab-item layui-show yzc-clearfix" style="position: relative;">
+										<form id="search-form-1" class="layui-form inquiry-form yzc-fl" style="width: 914px !important">
+											<div class="layui-form-item show-limit">
+												<div class="layui-inline yzc-clearfix">
+													<label class="">物资名称/编码：</label>
+													<div class="layui-input-block layui-input2" style="display: inherit; margin-left: 0">
+														<input name="nameOrCode" lay-verify="title" autocomplete="off" class="layui-input material-name-1" placeholder="请输入物资名称/编码" type="text" style="width: 200px" />
+													</div>
+													<label class="">物资分类：</label>
+													<div class="layui-input-block  layui-input2  material-select" style="width: 170px; display: inherit; margin-left: 0">
+														<input lay-verify="title" autocomplete="off" class="layui-input select-type-input1" placeholder="请选择物资分类" type="text" style="width: 200px" />
+													</div>
+													<input name="tid" type="hidden" id="tid-1" class="material-tid-1" />
+													<div class="select-type-group1">
+														<div class="layui-form-item">
+															<div class="layui-input-inline">
+																<select id="first-type-1" class="first-type" lay-filter="first-type-1">
+																	<option value="">请选择一级分类</option>
+																</select>
+															</div>
+															<div class="layui-input-inline">
+																<select id="second-type-1" class="second-type" lay-filter="second-type-1" disabled="">
+																	<option value="">请选择二级分类</option>
+																</select>
+															</div>
+															<div class="layui-input-inline">
+																<select id="third-type-1" class="third-type" lay-filter="third-type-1" disabled="">
+																	<option value="">请选择三级分类</option>
+																</select>
+															</div>
+														</div>
+													</div>
+													
+													<label class="">物资状态：</label>
+													<div class="layui-input-block layui-input2 material-select" style="width: 170px; display: inherit; margin-left: 0">
+														<select id="approveStatus-1" name="approveStatus" class="material-state-1">
+															<option value="">请选择状态</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<input name="used" type="hidden" value="1" />
+											<input name="pageNum" id="pageNum-1" type="hidden" value="1" />
+										</form>
+										<a id="search-1" class="material-radius-btn material-search-btn">搜索</a>
+										<a class="material-radius-btn material-clear-btn" onclick="onClear(1)">清除</a>
+									</div>
+									<div class="layui-tab-item yzc-clearfix" style="position: relative;">
+										<form id="search-form-0" class="layui-form inquiry-form yzc-fl" style="width: 914px !important">
+											<div class="layui-form-item show-limit">
+												<div class="layui-inline">
+													<label class="">物资名称/编码：</label>
+													<div class="layui-input-block layui-input2 " style="display: inherit; margin-left: 0">
+														<input name="nameOrCode" lay-verify="title" autocomplete="off" class="layui-input material-name-0" placeholder="请输入物资名称/编码" type="text" style="width: 200px" />
+													</div>
+													<label class="">物资分类：</label>
+													<div class="layui-input-block  layui-input2  material-select" style="width: 170px; display: inherit; margin-left: 0">
+														<input lay-verify="title" autocomplete="off" class="layui-input select-type-input0" placeholder="请选择物资分类" type="text" style="width: 200px" />
+													</div>
+													<input name="tid" type="hidden" id="tid-0" class="material-tid-0" />
+													<div class="select-type-group0">
+														<div class="layui-form-item">
+															<div class="layui-input-inline">
+																<select id="first-type-0" class="first-type" lay-filter="first-type-0">
+																	<option value="">请选择一级分类</option>
+																</select>
+															</div>
+															<div class="layui-input-inline">
+																<select id="second-type-0" class="second-type" lay-filter="second-type-0" disabled="">
+																	<option value="">请选择二级分类</option>
+																</select>
+															</div>
+															<div class="layui-input-inline">
+																<select id="third-type-0" class="third-type" lay-filter="third-type-0" disabled="">
+																	<option value="">请选择三级分类</option>
+																</select>
+															</div>
+														</div>
+													</div>
+													<label class="">物资状态：</label>
+													<div class="layui-input-block layui-input2 material-select" style="width: 170px; display: inherit; margin-left: 0">
+														<select id="approveStatus-0" name="approveStatus" class="material-state-0">
+															<option value="">请选择状态</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<input name="used" type="hidden" value="0" />
+											<input name="pageNum" id="pageNum-0" type="hidden" value="1" />
+										</form>
+										<a id="search-0" class="material-radius-btn material-search-btn">搜索</a>
+										<a class="material-radius-btn material-clear-btn" onclick="onClear(0)">清除</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="show-page-list" class="main-con-table source source-padding yzc-clearfix">
+						<div class="table-con">
+							<table class="layui-table">
+								<colgroup>
+									<col width="4%" />
+									<col width="17%" />
+									<col width="15%" />
+									<col width="9%" />
+									<col width="9%" />
+									<col width="9%" />
+									<col width="9%" />
+									<col width="10%" />
+									<col width="15%" />
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="yzc-aCenter">序号</th>
+										<th class="yzc-aCenter">物资名称/编码</th>
+										<th class="yzc-aCenter">所属分类</th>
+										<th class="yzc-aCenter">材质品牌</th>
+										<th class="yzc-aCenter">规格型号</th>
+										<th class="yzc-aCenter">添加时间</th>
+										<th class="yzc-aCenter">添加人</th>
+										<th class="yzc-aCenter">物资状态</th>
+										<th class="yzc-aCenter">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="goodsVO:${searchList.list}">
+										<td class="yzc-aCenter">
+											<p th:text="${goodsVOStat.count}"></p>
+										</td>
+										<td>
+											<p th:text="${goodsVO.fullCode}"></p>
+											<p th:text="${goodsVO.name}"></p>
+										</td>
+										<td class="yzc-aCenter">
+											<div th:if="${goodsVO.thirdRankName}">
+												<p th:text="${goodsVO.firstRankName} + '>' + ${goodsVO.secondRankName} + '>' + ${goodsVO.thirdRankName}"></p>
+											</div>
+											<div th:unless="${goodsVO.thirdRankName}">
+												<a href="" class="material-alert-color">请添加分类</a>
+											</div>
+										</td>
+										<td class="yzc-aCenter">
+											<p th:text="${goodsVO.brand}"></p>
+										</td>
+										<td class="yzc-aCenter">
+											<p th:text="${goodsVO.specifications}"></p>
+										</td>
+										<td class="yzc-aCenter">
+											<p th:text="${#dates.format(goodsVO.createTime,'yyyy-MM-dd HH:mm:ss')}"></p>
+										</td>
+										<td class="yzc-aCenter">
+											<p th:text="${goodsVO.creator}"></p>
+										</td>
+										<td class="yzc-aCenter">
+											<div th:switch="${goodsVO.approveStatus}">
+												<p th:case="${1}">已通过</p>
+												<p th:case="${11}">待提交</p>
+												<p th:case="${21}">审核中</p>
+												<p th:case="${31}">不通过</p>
+											</div>
+										</td>
+										<td class="yzc-aCenter">
+											<div th:switch="${goodsVO.approveStatus}">
+												<p th:case="${11}">
+													<a href="#" class="material-a" th:onclick="'deleteGoods(\''+${goodsVO.gidDES}+'\')'">删除</a>
+													&nbsp;&nbsp;
+													<a href="#" class="material-a" th:onclick="'modifyGoods(\''+${goodsVO.gidDES}+'\')'">修改</a>
+													&nbsp;&nbsp;
+													<a href="#" class="material-a" th:onclick="'viewDetail(\''+${goodsVO.gidDES}+'\')'">查看</a>
+												</p>
+												<p th:case="${21}">
+													<a href="#" class="material-a" th:onclick="'viewDetail(\''+${goodsVO.gidDES}+'\')'">查看</a>
+												</p>
+												<p th:case="${31}">
+													<a href="#" class="material-a" th:onclick="'deleteGoods(\''+${goodsVO.gidDES}+'\')'">删除</a>
+													&nbsp;&nbsp;
+													<a href="#" class="material-a" th:onclick="'modifyGoods(\''+${goodsVO.gidDES}+'\')'">修改</a>
+													&nbsp;&nbsp;
+													<a href="#" class="material-a" th:onclick="'viewDetail(\''+${goodsVO.gidDES}+'\')'">查看</a>
+												</p>
+												<p th:case="${1}">
+													<a href="#" class="material-a" th:onclick="'modifyGoods(\''+${goodsVO.gidDES}+'\')'">修改</a>
+													&nbsp;&nbsp;
+													<a href="#" class="material-a" th:onclick="'viewDetail(\''+${goodsVO.gidDES}+'\')'">查看</a>
+												</p>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="layui-box layui-laypage layui-laypage-default yzc-fr" id="pageDiv"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="yzc-frame-bottom ">
+		<ul>
+			<li>
+				<a>网站首页</a>
+			</li>
+			<li>
+				<a>招标采购</a>
+			</li>
+			<li>
+				<a>企业采购</a>
+			</li>
+			<li>
+				<a>优采金融</a>
+			</li>
+			<li>
+				<a>帮助中心</a>
+			</li>
+			<li class="yzc-frame-nob">
+				<a>意见反馈</a>
+			</li>
+		</ul>
+		<p>Copyright©2016 优质采（北京）科技发展有限公司 版权所有 皖ICP备05004986号</p>
+	</div>
+<script th:src="@{/res/js/jquery.js}"></script>
+<script th:src="@{/res/js/placeholder.js}"></script>
+<script th:src="@{/res/util/dialog-plus-min.js}" type="text/javascript"></script>
+<script th:src="@{/res/util/purchaseplanCommon.js}" type="text/javascript"></script>
+<script th:src="@{/res/util/form-to-json.js}"></script>
+<script th:src="@{/res/util/assertion.js}"></script>
+<script type="text/javascript">
+// 清空
+function onClear(used) {
+	$(".material-name-" + used).val('');
+	$(".material-type-" + used).val('');
+	$(".material-state-" + used).val('');
+	$(".material-tid-" + used).val('');
+	$(".select-type-input" + used).val('');
+	
+	layui.use('form', function() {
+		var form = layui.form(); //只有执行了这一步，部分表单元素才会自动修饰成功
+		form.render();
+	});
+}
+</script>
+<script th:inline="javascript">
+// 空字符
+function isEmptyString(str) {
+	var bool = false;
+	if (typeof (str) == "undefined" || str == null || str == 'null' || str == '') {
+		bool = true;
+	}
+	return bool;
+}
+
+// 搜索物资列表
+function search(datas){
+	$.ajax({
+		url : '/web/goods/searchmaterialtable',
+		type : 'POST',
+		contentType: 'application/json',
+		datType: "JSON",
+		data : JSON.stringify(datas),
+		async : false,
+		success : function(data) {
+			var used = datas.used;
+			// 物资列表
+			$("#show-page-list").empty();
+			var searchList = data.searchList;
+			var list = searchList.list;
+			var trs = '';
+			list.forEach(function(val, index) {
+				var fullCode = '';
+				if(!isEmptyString(val.fullCode)){
+					fullCode = val.fullCode;
+				}
+
+				var tidName = '';
+				if(isEmptyString(val.thirdRankName)){
+					tidName = '<a href="" class="material-alert-color">请添加分类</a>';
+				}else{
+					tidName = val.firstRankName+">"+val.secondRankName+">"+val.thirdRankName;
+				}
+	
+				var createTime = new Date(val.createTime).pattern("yyyy-MM-dd HH:mm:ss");
+				var creator = val.creator;
+				if(isEmptyString(creator)){
+					creator = '';
+				}
+	
+				var approveStatus = '';
+				var operate = '';
+				if(val.approveStatus == 11){
+					approveStatus = '待提交';
+					operate = '<a href="#" class="material-a" onclick="deleteGoods(\''+val.gidDES+'\')">删除</a>'+
+							  '&nbsp;&nbsp;'+
+							  '<a href="#" class="material-a" onclick="modifyGoods(\''+val.gidDES+'\')">修改</a>'+
+							  '&nbsp;&nbsp;'+
+							  '<a href="#" class="material-a" onclick="viewDetail(\''+val.gidDES+'\')">查看</a>';
+				}else if(val.approveStatus == 21){
+					approveStatus = '审核中';
+					operate = '<a href="#" class="material-a" onclick="viewDetail(\''+val.gidDES+'\')">查看</a>';
+				}else if(val.approveStatus == 31){
+					approveStatus = '不通过';
+					operate = '<a href="#" class="material-a" onclick="deleteGoods(\''+val.gidDES+'\')">删除</a>'+
+							  '&nbsp;&nbsp;'+
+							  '<a href="#" class="material-a" onclick="modifyGoods(\''+val.gidDES+'\')">修改</a>'+
+							  '&nbsp;&nbsp;'+
+							  '<a href="#" class="material-a" onclick="viewDetail(\''+val.gidDES+'\')">查看</a>';
+				}else if(val.approveStatus == 1){
+					approveStatus = '已通过';
+					operate = '<a href="#" class="material-a" onclick="modifyGoods(\''+val.gidDES+'\')">修改</a>'+
+							  '&nbsp;&nbsp;'+
+							  '<a href="#" class="material-a" onclick="viewDetail(\''+val.gidDES+'\')">查看</a>';
+				}
+				
+				trs = trs + 
+					'<tr>'+
+						'<td class="yzc-aCenter">'+(index+1)+'</td>'+
+						'<td>'+
+							'<p>'+fullCode+'</p>'+
+							'<p>'+val.name+'</p>'+
+						'</td>'+
+						'<td class="yzc-aCenter">'+tidName+'</td>'+
+						'<td class="yzc-aCenter">'+val.brand+'</td>'+
+						'<td class="yzc-aCenter">'+val.specifications+'</td>'+
+						'<td class="yzc-aCenter">'+createTime+'</td>'+
+						'<td class="yzc-aCenter">'+creator+'</td>'+
+						'<td class="yzc-aCenter">'+approveStatus+'</td>'+
+						'<td class="yzc-aCenter">'+operate+'</td>'+
+					'</tr>';
+			});
+	
+			var showTable = ''+
+				'<div class="table-con">'+
+					'<table class="layui-table">'+
+						'<colgroup>'+
+							'<col width="4%" />'+
+							'<col width="17%" />'+
+							'<col width="15%" />'+
+							'<col width="9%" />'+
+							'<col width="9%" />'+
+							'<col width="9%" />'+
+							'<col width="9%" />'+
+							'<col width="10%" />'+
+							'<col width="15%" />'+
+						'</colgroup>'+
+						'<thead>'+
+							'<tr>'+
+								'<th class="yzc-aCenter">序号</th>'+
+								'<th class="yzc-aCenter">物资名称/编码</th>'+
+								'<th class="yzc-aCenter">所属分类</th>'+
+								'<th class="yzc-aCenter">材质品牌</th>'+
+								'<th class="yzc-aCenter">规格型号</th>'+
+								'<th class="yzc-aCenter">添加时间</th>'+
+								'<th class="yzc-aCenter">添加人</th>'+
+								'<th class="yzc-aCenter">物资状态</th>'+
+								'<th class="yzc-aCenter">操作</th>'+
+							'</tr>'+
+						'</thead>'+
+						'<tbody>'+
+							trs+
+						'</tbody>'+
+					'</table>'+
+				'</div>';
+			var pageInfo = '<div class="layui-box layui-laypage layui-laypage-default yzc-fr" id="pageDiv"></div>';
+			$("#show-page-list").append(showTable).append(pageInfo);
+			
+			// 加载分页数据
+			var totalPageNum = searchList.totalPageNum; 
+			var pageNum = searchList.pageNum; 
+			layui.use([ 'laypage', 'layer' ], function() {
+				var laypage = layui.laypage, layer = layui.layer;
+				laypage({
+					cont : 'pageDiv',
+					pages : totalPageNum, //总页数
+					groups : 5, //连续显示分页数
+					curr : pageNum,
+					jump: function(obj){
+						if(pageNum != obj.curr){
+							var datas = $("#search-form-"+ used).toJSON();
+							datas.pageNum = obj.curr;
+							search(datas);
+						}
+					}
+				});
+			});
+			
+			// 物资启用统计
+			if(datas.used==1){						
+				$("#usedNum").text(data.usedOrNotCount.usedCount);
+			}else{						
+				$("#unUsedNum").text(data.usedOrNotCount.unUsedCount);
+			}
+			
+			// 当前页
+			$("#pageNum-" + used).val(datas.pageNum);
+			
+		},
+		error : function(data) {
+			AlertErrorMessage("请稍后再试！");
+		}
+	});
+}
+
+// 删除物资
+function deleteGoods(gid){
+	var txt = '<h3 class="alert-title" style="text-align: center;font-size:18px;margin-top:75px">确定删除该物资？</h3>';
+	confirmDialog("确认删除", txt, function() {
+		var datas = {gid : gid};
+ 		$.ajax({
+			url : '/web/goods/deletematerial',
+			type : 'POST',
+			contentType: 'application/json; charset=UTF-8',
+			datType: "JSON",
+			data : JSON.stringify(datas),
+			async : false,
+			success : function(data) {
+				if(data.code == 1000){					
+					var usedStatus = $("#usedStatus").val();
+					var datas = $("#search-form-" + usedStatus).toJSON();
+					search(datas);
+				}else{
+					AlertErrorMessage("删除失败！");
+				}
+			},
+			error : function(data) {
+				AlertErrorMessage("请稍后再试！");
+			}
+		});   
+	});
+}
+
+//修改物资
+function modifyGoods(gid){
+	openBlank("/web/goods/tomodify?gid="+gid.toLowerCase(),{},true);
+}
+
+// 查看物资
+function viewDetail(gid){
+	openBlank("/web/goods/viewmaterial?gid="+gid.toLowerCase(),{},true);
+//		openBlank("/web/goods/viewmaterial",{gid : gid},true);
+}
+
+function openBlank(action,data,n){
+	var form = $("<form/>").attr('action',action).attr('method','post');
+	if(n){			
+		form.attr('target','_blank');
+	}
+	var input = '';
+	$.each(data, function(i,n){
+		input += '<input type="hidden" name="'+ i +'" value="'+ n +'" />';
+	});
+	form.append(input).appendTo("body").css('display','none').submit();
+}
+</script>
+<script th:inline="javascript">
+	$(function(){	
+	    
+		// 加载一级分类
+		var firstRankTypes = [[${firstRankTypes}]];
+	    if(typeof(firstRankTypes)!="undefined"){
+		    var firstType1 = $("#first-type-1");
+		    var firstType0 = $("#first-type-0");
+		    firstRankTypes.forEach(function( val, index ) {
+		    	firstType1.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+		    	firstType0.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+			});
+	    }
+	    
+	    layui.use(['form', 'layedit', 'laydate'], function(){
+			var form = layui.form()
+			,layer = layui.layer
+			,layedit = layui.layedit
+			,laydate = layui.laydate;
+
+			// 一级菜单选择
+			form.on('select(first-type-1)', function(data){
+				var secondType = $("#second-type-1");
+				secondType.empty();
+				secondType.append('<option value="">请选择二级分类</option>');
+				
+				var thirdType = $("#third-type-1");
+				thirdType.empty();
+				thirdType.append('<option value="">请选择三级分类</option>');
+				
+				// 加载二级类型列表
+				var firstRankId = data.value;
+				var datas = {pid : firstRankId};
+				$.ajax({
+					url : '/web/goodstype/subtypeList',
+					type : 'POST',
+					contentType: 'application/json; charset=UTF-8',
+					datType: "JSON",
+					data : JSON.stringify(datas),
+					async : false,
+					success : function(data) {
+						var secondType = $("#second-type-1");
+						secondType.empty();
+						secondType.append('<option value="">请选择二级分类</option>');
+						
+						data.forEach(function( val, index ) {
+					    	secondType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+						});
+					},
+					error : function(data) {
+						AlertErrorMessage("请稍后再试！");
+					}
+				});  
+				
+				$('#second-type-1').attr("disabled",false);
+				form.render('select'); 
+			});
+			 	
+			//二级菜单选择
+			form.on('select(second-type-1)', function(data){
+				// 加载三级类型列表
+				var secondRankId = data.value;
+				var datas = {pid : secondRankId};
+				$.ajax({
+					url : '/web/goodstype/subtypeList',
+					type : 'POST',
+					contentType: 'application/json; charset=UTF-8',
+					datType: "JSON",
+					data : JSON.stringify(datas),
+					async : false,
+					success : function(data) {
+						var thirdType = $("#third-type-1");
+						thirdType.empty();
+						thirdType.append('<option value="">请选择三级分类</option>');
+						
+						data.forEach(function( val, index ) {
+			 		    	thirdType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+						});
+					},
+					error : function(data) {
+						AlertErrorMessage("请稍后再试！");
+					}
+				}); 
+			
+				$('#third-type-1').attr("disabled",false);
+				form.render('select');
+			});
+			
+			//三级菜单选择
+			form.on('select(third-type-1)', function(data){
+				// 展示
+				var textSelect1 = $("#first-type-1").find("option:selected").text();
+				var textSelect2 = $("#second-type-1").find("option:selected").text();
+				var textSelect3 = $("#third-type-1").find("option:selected").text();
+				var textTotal = textSelect1+">>"+textSelect2+">>"+textSelect3;
+				$(".select-type-input1").val(textTotal);
+				
+				// 传输值
+				var valSelect3 = $("#third-type-1").val();
+				$("#tid-1").val(valSelect3);
+				
+				$(".select-type-group1").hide();
+				$('#second-type-1').attr("disabled",true);
+				$('#third-type-1').attr("disabled",true);
+				form.render('select');
+			});
+			
+			// 一级菜单选择(切换页)
+			form.on('select(first-type-0)', function(data){
+				var secondType = $("#second-type-0");
+				secondType.empty();
+				secondType.append('<option value="">请选择二级分类</option>');
+				
+				var thirdType = $("#third-type-0");
+				thirdType.empty();
+				thirdType.append('<option value="">请选择三级分类</option>');
+				
+				// 加载二级类型列表(切换页)
+				var firstRankId = data.value;
+				var datas = {pid : firstRankId};
+				$.ajax({
+					url : '/web/goodstype/subtypeList',
+					type : 'POST',
+					contentType: 'application/json; charset=UTF-8',
+					datType: "JSON",
+					data : JSON.stringify(datas),
+					async : false,
+					success : function(data) {
+						var secondType = $("#second-type-0");
+						secondType.empty();
+						secondType.append('<option value="">请选择二级分类</option>');
+						
+						data.forEach(function( val, index ) {
+					    	secondType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+						});
+					},
+					error : function(data) {
+						AlertErrorMessage("请稍后再试！");
+					}
+				});  
+				
+				$('#second-type-0').attr("disabled",false);
+				form.render('select'); 
+			});
+			 	
+			// 二级菜单选择(切换页)
+			form.on('select(second-type-0)', function(data){
+				// 加载三级类型列表
+				var secondRankId = data.value;
+				var datas = {pid : secondRankId};
+				$.ajax({
+					url : '/web/goodstype/subtypeList',
+					type : 'POST',
+					contentType: 'application/json; charset=UTF-8',
+					datType: "JSON",
+					data : JSON.stringify(datas),
+					async : false,
+					success : function(data) {
+						var thirdType = $("#third-type-0");
+						thirdType.empty();
+						thirdType.append('<option value="">请选择三级分类</option>');
+						
+						data.forEach(function( val, index ) {
+			 		    	thirdType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+						});
+					},
+					error : function(data) {
+						AlertErrorMessage("请稍后再试！");
+					}
+				}); 
+			
+				$('#third-type-0').attr("disabled",false);
+				form.render('select');
+			});
+			
+			// 三级菜单选择(切换页)
+			form.on('select(third-type-0)', function(data){
+				// 展示
+				var textSelect1 = $("#first-type-0").find("option:selected").text();
+				var textSelect2 = $("#second-type-0").find("option:selected").text();
+				var textSelect3 = $("#third-type-0").find("option:selected").text();
+				var textTotal = textSelect1+">>"+textSelect2+">>"+textSelect3;
+				$(".select-type-input0").val(textTotal);
+				
+				// 传输值
+				var valSelect3 = $("#third-type-0").val();
+				$("#tid-0").val(valSelect3);
+				
+				$(".select-type-group0").hide();
+				$('#second-type-0').attr("disabled",true);
+				$('#third-type-0').attr("disabled",true);
+				form.render('select');
+			});
+		});
+		
+		// 审核状态列表
+		var approveStatusList = [[${approveStatusList}]];
+		var approveStatus1 = $("#approveStatus-1");
+		var approveStatus0 = $("#approveStatus-0");
+		approveStatusList.forEach(function(val, index) {
+			approveStatus1.append('<option value="'+val.code+'">'+val.msg+'</option>');
+			approveStatus0.append('<option value="'+val.code+'">'+val.msg+'</option>');
+		});
+		
+		// 分页
+		var totalPageNum = [[${searchList.totalPageNum}]]; //取值
+		var pageNum = [[${searchList.pageNum}]]; //取值
+		layui.use([ 'laypage', 'layer' ], function() {
+			var laypage = layui.laypage, layer = layui.layer;
+			laypage({
+				cont : 'pageDiv',
+				pages : totalPageNum, //总页数
+				groups : 5, //连续显示分页数
+				curr : pageNum,
+				jump: function(obj){
+					console.log(obj.curr);
+					if(pageNum != obj.curr){
+						var datas = $("#search-form-1").toJSON();
+						datas.pageNum = obj.curr;
+						search(datas);
+					}
+				}
+			});
+		});
+		
+ 		Date.prototype.pattern=function(fmt) {           
+		    var o = {           
+		    "M+" : this.getMonth()+1, //月份           
+		    "d+" : this.getDate(), //日           
+		    "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时           
+		    "H+" : this.getHours(), //小时           
+		    "m+" : this.getMinutes(), //分           
+		    "s+" : this.getSeconds(), //秒           
+		    "q+" : Math.floor((this.getMonth()+3)/3), //季度           
+		    "S" : this.getMilliseconds() //毫秒           
+		    };           
+		    var week = {           
+		    "0" : "/u65e5",           
+		    "1" : "/u4e00",           
+		    "2" : "/u4e8c",           
+		    "3" : "/u4e09",           
+		    "4" : "/u56db",           
+		    "5" : "/u4e94",           
+		    "6" : "/u516d"          
+		    };           
+		    if(/(y+)/.test(fmt)){           
+		        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));           
+		    }           
+		    if(/(E+)/.test(fmt)){           
+		        fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);           
+		    }           
+		    for(var k in o){           
+		        if(new RegExp("("+ k +")").test(fmt)){           
+		            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));           
+		        }           
+		    }           
+		    return fmt;           
+		}  
+		
+		// 切换是否使用
+		$('.usedCla').click(function(){
+			var used = $(this).attr("used");
+			$("#usedStatus").val(used);
+			var datas = $("#search-form-" + used).toJSON();
+			search(datas);
+		});
+		
+		// 搜索
+		$("#search-1").click(function(){
+			$("#pageNum-1").val(1);
+			var datas = $("#search-form-1").toJSON();
+			search(datas);
+		}); 
+		
+		$("#search-0").click(function(){
+			$("#pageNum-0").val(1);
+			var datas = $("#search-form-0").toJSON();
+			console.log(datas);
+			search(datas);
+		}); 
+		/* 获取焦点显示三级分类 */
+		$(".select-type-input1").focus(function(){
+			  $(".select-type-group1").show();
+		});
+		$(".select-type-input0").focus(function(){
+			  $(".select-type-group0").show();
+		});
+		
+		//点击空白处隐藏选择
+		$(".show-limit").click(function(event){
+	        var e=window.event || event;
+	        if(e.stopPropagation){
+	            e.stopPropagation();
+	        }else{
+	            e.cancelBubble = true;
+	        }
+	    });
+	    document.onclick = function(){
+	        $(".select-type-group1").hide();
+	        $(".select-type-group0").hide();
+	    };
+	});
+</script>
+</body>
+</html>

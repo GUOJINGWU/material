@@ -1,0 +1,55 @@
+//添加其他属性
+$(".add-other-type").click(function(){
+
+    var everyType= '<div class="add-brand-li" style="padding-left: 114px">'+
+                    '<div class="layui-inline" style="width: 120px">'+
+                    '<div class="layui-input-block layui-input2" style="display: inherit;margin-left: 0;position: relative;">'+
+                    '<input lay-verify="title" autocomplete="off" class="layui-input  input-clear-brand"placeholder="如：品牌" type="text" style="width: 98px;display: inline-block;" />&nbsp;&nbsp;:'+
+                    '</div>'+
+                    '</div>'+
+                    '<div class="layui-inline" style="width: 470px">'+
+                    '<div class="layui-input-block layui-input2" style="display: inherit;margin-left: 0;position: relative;">'+
+                    '<input lay-verify="title" autocomplete="off" class="layui-input  input-clear-brand" placeholder="格力" type="text" style="width: 180px;display: inline-block;" />'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>';
+
+    $(".add-brand-type").append(everyType);
+
+});
+
+
+//确认弹窗
+console.log(2)
+function confirmState() {
+layui.use(['laypage', 'layer', 'form', 'laydate', 'table'], function () {
+   var laypage = layui.laypage
+           , layer = layui.layer;
+   var form = layui.form;
+
+   var laydate = layui.laydate;
+   var table = layui.table;
+
+   var DeleteText = "<div class='yzc-box'><i class='yzc-box-confirm'></i><span>确定提交物资信息？</span></div>";
+
+   layer.open({
+       title: "提示",
+       type: 1,
+       offset: '200px',
+       content: DeleteText,
+       btn: ['确认','取消'],
+       area: ['434px', '272px'],
+       yes: function (index, layero) {
+           layer.close(index);
+           location.href="物资列表页.html"
+       },
+       cancel: function () {
+
+       }
+
+   });
+
+});
+
+}
+

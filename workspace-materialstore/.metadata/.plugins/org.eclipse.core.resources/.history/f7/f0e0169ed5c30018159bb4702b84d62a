@@ -1,0 +1,38 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width" />
+<link href="//cdn.ukzhicai.com/layui/css/layui.css" rel="stylesheet"
+	type="text/css" />
+<link href="//cdn.ukzhicai.com/css/global.css" rel="stylesheet"
+	type="text/css" />
+<script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.youzhicai.com/layui/layui.js"></script>
+<script type="text/javascript">
+	layui.config({
+		version : true,
+		base : 'https://cdn.youzhicai.com/modules/'
+	}).use([ 'frame', 'utility' ], function() {
+		var frame = layui.frame;
+		frame.loadAll();
+		$(".OneTRight.YzcSideRight").removeClass("OneTRight");
+	});
+</script>
+</head>
+<body class="yzc-skin-buyer">
+	<div class="yzc-frame-loading"></div>
+	<div class="yzc-frame-top"></div>
+	<div class="yzc-frame-center">
+		<div class="yzc-frame-right">
+			<div class="yzc-frame-body">
+				<div class="main-container">
+				12345678977777777
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

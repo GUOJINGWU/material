@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsSupplyDAO">
+
+	<sql id="goodssupply_columns_withoutID">
+		gid, style, name, value, createId, creator, createTime, updateId, updator, updateTime
+	</sql>
+
+	<sql id="goodssupply_columns">
+		id,
+		<include refid="goodssupply_columns_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		INSERT INTO goodssupply
+		(
+		<include refid="goodssupply_columns_withoutID" />
+		)
+		SELECT
+		#{gid},#{style},#{name},#{value},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime}
+		FROM DUAL
+		WHERE NOT EXISTS(
+		SELECT id
+		FROM goodssupply WHERE gid = #{gid} AND name = #{name}
+		)
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		UPDATE goodssupply
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="value != null and value != '' ">
+			,value = #{value}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		WHERE id = #{id} AND gid = #{gid} AND style = #{style}
+	</update>
+
+	<select id="findListByGid" resultType="com.youzhicai.materialstore.po.GoodsSupplyPO">
+		SELECT
+		<include refid="goodssupply_columns" />
+		FROM goodssupply
+		WHERE gid = #{gid}
+		<if test="style != null and style != '' ">
+			AND style = #{style}
+		</if>
+		ORDER BY id,style ASC
+	</select>
+
+
+</mapper>   

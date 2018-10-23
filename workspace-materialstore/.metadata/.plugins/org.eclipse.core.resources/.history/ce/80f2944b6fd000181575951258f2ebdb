@@ -1,0 +1,28 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>demo</title>
+
+</head>
+<div th:include="default/yzcheader :: header"></div>
+<body class="yzc-skin-buyer">
+	<div class="yzc-frame-loading"></div>
+	<div class="yzc-frame-top"></div>
+	<div class="yzc-frame-center">
+		<div class="yzc-frame-right">
+			<div class="yzc-frame-body">
+				<div class="main-container">
+					           
+									<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+									  <legend>开门见山 ： 默认分页</legend>
+									</fieldset>
+									 
+									<div id="demo1"></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

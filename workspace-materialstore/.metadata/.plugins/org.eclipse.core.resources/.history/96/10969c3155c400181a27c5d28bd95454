@@ -1,0 +1,22 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>demo</title>
+</head>
+<div th:include="default/yzcheader :: header"></div>
+<body class="yzc-skin-buyer">
+	<div class="yzc-frame-loading"></div>
+	<div class="yzc-frame-top"></div>
+	<div class="yzc-frame-center">
+		<div class="yzc-frame-right">
+			<div class="yzc-frame-body">
+				<div class="main-container">
+				
+				<h1>DEMO</h1>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+/**  
+ * @Title: GoodsService.java
+ * @Package com.youzhicai.materialstore.service
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午5:08:14
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youzhicai.materialstore.dto.GoodsDTO;
+import com.youzhicai.materialstore.handler.Page;
+import com.youzhicai.materialstore.vo.GoodsAPIVO;
+import com.youzhicai.materialstore.vo.GoodsSearchVO;
+import com.youzhicai.materialstore.vo.GoodsVO;
+
+/**
+ * @ClassName: GoodsService
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午5:08:14
+ */
+public interface GoodsService {
+
+    /**
+     * @Title: nextGoodsCode
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return Map<String, Object>
+     */
+    public Map<String, Object> nextGoodsCode(GoodsDTO goodsDTO);
+
+    /**
+     * @Title: addGoods
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return boolean
+     */
+    public boolean addGoods(GoodsDTO goodsDTO);
+
+    /**
+     * @Title: checkCodes
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return
+     * @return List<GoodsVO>
+     */
+    public List<GoodsAPIVO> checkCodes(GoodsDTO goodsDTO);
+
+    /**
+     * @Title: findGoodsDetail
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return
+     * @return GoodsVO
+     */
+    public GoodsVO findGoodsDetail(GoodsDTO goodsDTO);
+
+    /**
+     * @Title: findGoodsListForSearch
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return
+     * @return Page<GoodsSearchVO>
+     */
+    public Page<GoodsSearchVO> findGoodsListForSearch(GoodsDTO goodsDTO);
+
+    /**
+     * @Title: countForUsedOrNot
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsDTO
+     * @return
+     * @return Map<String,Object>
+     */
+    public Map<String, Object> countForUsedOrNot(GoodsDTO goodsDTO);
+
+}

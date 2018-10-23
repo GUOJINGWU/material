@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>    
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace的值就是dao接口的完整路径 -->
+<mapper namespace="com.youzhicai.materialstore.dao.GoodsDAO">
+
+	<sql id="goods_columns_withoutID">
+		companyId, companyName, name, code, fullCode, tid, unit, brand, specifications, remarks, link, used, status, createId, creator, createTime,
+		updateId, updator, updateTime
+	</sql>
+
+	<sql id="goods_columns">
+		id,
+		<include refid="goods_columns_withoutID" />
+	</sql>
+	
+	<sql id="goods_columns_alias_withoutID">
+		g.companyId, g.companyName, g.name, g.code, g.fullCode, g.tid, g.unit, g.brand, g.specifications, g.remarks, g.link, g.used, g.status, g.createId, g.creator, g.createTime,
+		g.updateId, g.updator, g.updateTime
+	</sql>
+
+	<sql id="goods_columns_alias">
+		g.id,
+		<include refid="goods_columns_alias_withoutID" />
+	</sql>
+
+	<insert id="save" parameterType="com.youzhicai.materialstore.po.GoodsPO" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO goods
+		(
+		<include refid="goods_columns_withoutID" />
+		)
+		SELECT
+		#{companyId},#{companyName},#{name},#{code},#{fullCode},#{tid},#{unit},#{brand},#{specifications},#{remarks},#{link},#{used},#{status},#{createId},#{creator},NOW(),#{updateId},#{updator},#{updateTime}
+		FROM DUAL
+		WHERE NOT EXISTS(SELECT * FROM goods WHERE status =1 AND companyId = #{companyId} AND tid = #{tid} AND (name = #{name} OR code = #{code}) )
+	</insert>
+
+	<update id="modify" parameterType="com.youzhicai.materialstore.po.GoodsPO">
+		UPDATE goods
+		SET updateTime = NOW()
+		<if test="name != null and name != '' ">
+			,name = #{name}
+		</if>
+		<if test="code != null and code != '' ">
+			,code = #{code}
+		</if>
+		<if test="fullCode != null and fullCode != '' ">
+			,fullCode = #{fullCode}
+		</if>
+		<if test="tid != null and tid != '' ">
+			,tid = #{tid}
+		</if>
+		<if test="unit != null and unit != '' ">
+			,unit = #{unit}
+		</if>
+		<if test="brand != null and brand != '' ">
+			,brand = #{brand}
+		</if>
+		<if test="specifications != null and specifications != '' ">
+			,specifications = #{specifications}
+		</if>
+		<if test="remarks != null and remarks != '' ">
+			,remarks = #{remarks}
+		</if>
+		<if test="link != null and link != '' ">
+			,link = #{link}
+		</if>
+		<if test="used != null ">
+			,used = #{used}
+		</if>
+		<if test="status != null ">
+			,status = #{status}
+		</if>
+		<if test="updateId != null and updateId != '' ">
+			,updateId = #{updateId}
+		</if>
+		<if test="updator != null and updator != '' ">
+			,updator = #{updator}
+		</if>
+		WHERE id = #{id}
+	</update>
+
+	<select id="findOneById" resultType="com.youzhicai.materialstore.po.GoodsPO">
+		SELECT
+		<include refid="goods_columns" />
+		FROM goods
+		WHERE id = #{id} AND companyId = #{companyId} AND status = 1
+	</select>
+
+	<select id="findSubCodeList" resultType="int">
+		SELECT code
+		FROM goods
+		WHERE status = 1 AND tid = #{tid} AND companyId = #{companyId}
+	</select>
+
+	<select id="findOneByTidAndCode" resultType="com.youzhicai.materialstore.po.GoodsPO">
+		SELECT
+		<include refid="goods_columns_alias" />
+		FROM goods g 
+		<if test="approveStatusList != null and approveStatusList != '' ">
+			LEFT JOIN goodsapprove ga ON g.id = ga.gid 
+		</if>
+		WHERE g.status = 1 AND g.tid = #{tid} AND g.code = #{code} AND g.companyId = #{companyId} 
+		<if test="approveStatusList != null and approveStatusList != '' ">
+			AND ga.status = 1 AND ga.approveStatus IN 
+			<foreach item="item" collection="approveStatusList" separator="," open="(" close=")" index="">
+	      		#{item}
+	    	</foreach>
+		</if>
+		<if test="newGoodsId != null ">
+			AND g.id != #{newGoodsId} 
+		</if>
+	</select>
+
+	<select id="findListForSearch" resultType="java.util.HashMap">
+		SELECT g.id,g.name,g.code,g.fullCode,g.tid,g.unit,g.brand,g.specifications,g.remarks,g.link,g.used,g.creator,g.createTime
+		,ga.approveStatus AS approveStatus
+		,gt1.code AS firstRankCode,gt2.code AS secondRankCode,gt3.code AS thirdRankCode
+		,gt1.name AS firstRankName,gt2.name AS secondRankName,gt3.name AS thirdRankName
+		FROM goods g
+		LEFT JOIN
+		goodsapprove ga ON g.id = ga.gid
+		LEFT JOIN goodstype gt3 ON gt3.id = g.tid
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON
+		gt1.id = gt2.pid
+		WHERE g.status = 1 AND g.companyId = #{companyId}
+		AND ga.status = 1 
+		<if test="used != null ">
+			AND g.used = #{used}
+		</if>
+		<if test="tid != null and tid != '' ">
+			AND g.tid = #{tid}
+		</if>
+		<if test="approveStatus != null ">
+			AND ga.approveStatus = #{approveStatus}
+		</if>
+		<if test="approved != null ">
+			<if test="approved == 1 ">
+				AND ga.approveStatus IN (1,31)
+			</if>
+			<if test="approved == 0 ">
+				AND ga.approveStatus IN (21)
+			</if>
+		</if>
+		<if test="nameOrCode != null and nameOrCode != '' ">
+			AND (g.name LIKE #{nameOrCode} OR g.fullCode LIKE #{nameOrCode} )
+		</if>
+		ORDER BY g.createTime DESC,g.id
+		LIMIT #{start},#{num}
+	</select>
+	
+	<select id="findListForSearchCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM goods g
+		LEFT JOIN
+		goodsapprove ga ON g.id = ga.gid
+		LEFT JOIN goodstype gt3 ON gt3.id = g.tid
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON
+		gt1.id = gt2.pid
+		WHERE g.status = 1 AND g.companyId = #{companyId} 
+		AND ga.status = 1 
+		<if test="used != null ">
+			AND g.used = #{used}
+		</if>
+		<if test="tid != null and tid != '' ">
+			AND g.tid = #{tid}
+		</if>
+		<if test="approveStatus != null ">
+			AND ga.approveStatus = #{approveStatus}
+		</if>
+		<if test="approved != null ">
+			<if test="approved == 1 ">
+				AND ga.approveStatus IN (1,31)
+			</if>
+			<if test="approved == 0 ">
+				AND ga.approveStatus IN (21)
+			</if>
+		</if>
+		<if test="nameOrCode != null and nameOrCode != '' ">
+			AND (g.name LIKE #{nameOrCode} OR g.fullCode LIKE #{nameOrCode} )
+		</if>
+		ORDER BY g.createTime DESC,g.id 
+	</select>
+	
+	<select id="findGoodsListForSearchAPI" resultType="java.util.HashMap">
+		SELECT g.id,g.name,g.code,g.fullCode,g.tid,g.unit,g.brand,g.specifications,g.remarks,g.link,g.used,g.status,g.creator,g.createTime
+		,ga.approveStatus AS approveStatus
+		,gt1.code AS firstRankCode,gt2.code AS secondRankCode,gt3.code AS thirdRankCode
+		,gt1.name AS firstRankName,gt2.name AS secondRankName,gt3.name AS thirdRankName
+		,gt1.id AS firstRankId,gt2.id AS secondRankId,gt3.id AS thirdRankId  
+		FROM goods g
+		LEFT JOIN goodsapprove ga ON g.id = ga.gid
+		LEFT JOIN goodstype gt3 ON gt3.id = g.tid
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid
+		WHERE g.status = 1 AND g.companyId = #{companyId}
+		AND g.used = 1
+		AND ga.status = 1 
+		AND ga.approveStatus = 1
+		<if test="tids != null ">
+			AND g.tid IN 
+			<foreach item="item" collection="tids" separator="," open="(" close=")" index="">
+	      		#{item}
+	    	</foreach>
+		</if>
+		<if test="nameOrCode != null and nameOrCode != '' ">
+			AND (g.name LIKE #{nameOrCode} OR g.fullCode LIKE #{nameOrCode} )
+		</if>
+		ORDER BY g.createTime DESC,g.id
+		LIMIT #{start},#{num}
+	</select>
+	
+	<select id="findGoodsListForSearchAPICount" resultType="java.lang.Integer">
+		SELECT count(1) 
+		FROM goods g
+		LEFT JOIN goodsapprove ga ON g.id = ga.gid
+		LEFT JOIN goodstype gt3 ON gt3.id = g.tid
+		LEFT JOIN goodstype gt2 ON gt2.id = gt3.pid
+		LEFT JOIN goodstype gt1 ON gt1.id = gt2.pid
+		WHERE g.status = 1 AND g.companyId = #{companyId}
+		AND g.used = 1 
+		AND ga.status = 1 
+		AND ga.approveStatus = 1
+		<if test="tids != null ">
+			AND g.tid IN 
+			<foreach item="item" collection="tids" separator="," open="(" close=")" index="">
+	      		#{item}
+	    	</foreach>
+		</if>
+		<if test="nameOrCode != null and nameOrCode != '' ">
+			AND (g.name LIKE #{nameOrCode} OR g.fullCode LIKE #{nameOrCode} )
+		</if>
+		ORDER BY g.createTime DESC,g.id
+	</select>
+
+	<select id="findListAlikeGoods" resultType="com.youzhicai.materialstore.po.GoodsPO">
+		SELECT
+		<include refid="goods_columns_alias" />
+		FROM goods g
+		LEFT JOIN goodsapprove ga ON g.id = ga.gid
+		WHERE g.status = 1 AND g.companyId = #{companyId} AND g.used = 1 AND ga.status = 1 AND ga.approveStatus = 1
+		<if test="brand != null and brand != '' ">
+			AND g.brand LIKE #{brand}
+		</if>
+		<if test="specifications != null and specifications != '' ">
+			AND g.specifications LIKE #{specifications}
+		</if>
+		ORDER BY g.createTime DESC
+	</select>
+
+</mapper>

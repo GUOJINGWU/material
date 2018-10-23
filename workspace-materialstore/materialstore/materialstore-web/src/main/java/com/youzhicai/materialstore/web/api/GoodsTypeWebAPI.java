@@ -1,0 +1,84 @@
+/**  
+ * @Title: GoodsTypeWebAPI.java
+ * @Package com.youzhicai.materialstore.web.api
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月29日 下午7:41:28
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.api;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.youzhicai.materialstore.api.GoodsTypeAPI;
+import com.youzhicai.materialstore.dto.GoodsTypeDTO;
+import com.youzhicai.materialstore.handler.UnLogin;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+import com.youzhicai.materialstore.web.api.transfer.DataTransfer;
+import com.youzhicai.materialstore.web.api.transfer.TransferType;
+
+/**
+ * @ClassName: GoodsTypeWebAPI
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月29日 下午7:41:28
+ */
+@RestController
+@RequestMapping("webapi/goodstype")
+public class GoodsTypeWebAPI {
+
+    @Autowired
+    private GoodsTypeAPI goodsTypeAPI;
+
+    @UnLogin
+    @RequestMapping("subtypes")
+    public DataTransfer<List<GoodsTypeVO>> subtypeList(Long pid, String companyId) {
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setPid(pid);
+        goodsTypeDTO.setCompanyId(companyId);
+
+        List<GoodsTypeVO> subtypeList = goodsTypeAPI.subtypeList(goodsTypeDTO);
+
+        if (subtypeList != null) {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.SUCCESS.getCode(), TransferType.SUCCESS.getMsg(), subtypeList);
+        } else {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.DATANULL.getCode(), TransferType.DATANULL.getMsg());
+        }
+    }
+
+    @UnLogin
+    @RequestMapping("subtypesbyfirstid")
+    public DataTransfer<List<GoodsTypeVO>> subTypesByFirstId(Long[] firstIds, String companyId) {
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setFirstIds(firstIds);
+        goodsTypeDTO.setCompanyId(companyId);
+
+        List<GoodsTypeVO> subtypeList = goodsTypeAPI.subTypesByFirstId(goodsTypeDTO);
+
+        if (subtypeList != null) {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.SUCCESS.getCode(), TransferType.SUCCESS.getMsg(), subtypeList);
+        } else {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.DATANULL.getCode(), TransferType.DATANULL.getMsg());
+        }
+    }
+
+    @UnLogin
+    @RequestMapping("subtypesforshop")
+    public DataTransfer<List<GoodsTypeVO>> subTypesForShop(String companyId) {
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setCompanyId(companyId);
+
+        List<GoodsTypeVO> subtypeList = goodsTypeAPI.subTypesForShop(goodsTypeDTO);
+
+        if (subtypeList != null) {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.SUCCESS.getCode(), TransferType.SUCCESS.getMsg(), subtypeList);
+        } else {
+            return new DataTransfer<List<GoodsTypeVO>>(TransferType.DATANULL.getCode(), TransferType.DATANULL.getMsg());
+        }
+    }
+
+}

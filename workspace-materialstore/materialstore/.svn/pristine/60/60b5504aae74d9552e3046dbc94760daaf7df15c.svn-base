@@ -1,0 +1,31 @@
+/**  
+ * @Title: TypeUserDTO.java
+ * @Package com.youzhicai.materialstore.dto
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月10日 下午6:49:54
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.dto;
+
+import com.youzhicai.materialstore.entity.TypeUser;
+
+/**
+ * @ClassName: TypeUserDTO
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月10日 下午6:49:54
+ */
+public class TypeUserDTO extends TypeUser {
+
+    private Long[] tids;
+
+    public Long[] getTids() {
+        return tids;
+    }
+
+    public void setTids(Long[] tids) {
+        this.tids = tids;
+    }
+
+}

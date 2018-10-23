@@ -1,0 +1,100 @@
+/**  
+ * @Title: GoodsTypeDAO.java
+ * @Package com.youzhicai.materialstore.dao
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:16:08
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youzhicai.materialstore.po.GoodsTypePO;
+
+/**
+ * @ClassName: GoodsTypeDAO
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月18日 下午5:16:08
+ */
+public interface GoodsTypeDAO {
+
+    /**
+     * @Title: findGoodsTypeById
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryMap
+     * @return GoodsTypePO
+     */
+    public GoodsTypePO findGoodsTypeById(Map<String, Object> queryMap);
+
+    /**
+     * @Title: findSubtypeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryMap
+     * @return List<GoodsTypePO>
+     */
+    public List<GoodsTypePO> findSubtypeList(Map<String, Object> queryMap);
+
+    /**
+     * @Title: save
+     * @Description: 保存物资分类
+     * @param goodsTypePO
+     * @return int
+     */
+    public int save(GoodsTypePO goodsTypePO);
+
+    /**
+     * @Title: findThirdRankMixList
+     * @Description: 三级物资类型混合查询
+     * @param queryMap
+     * @return List<Map<String,Object>>
+     */
+    public List<Map<String, Object>> findThirdRankMixList(Map<String, Object> queryMap);
+
+    /**
+     * @Title: findThirdRankMixListCount
+     * @Description: 三级物资类型混合总量查询
+     * @param queryMap
+     * @return int
+     */
+    public int findThirdRankMixListCount(Map<String, Object> queryMap);
+
+    /**
+     * @Title: findSubtypeCodeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryMap
+     * @return List<Integer>
+     */
+    public List<Integer> findSubtypeCodeList(Map<String, Object> queryMap);
+
+    /**
+     * @Title: findFirstRankSubtypeCodeList
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryMap
+     * @return List<String>
+     */
+    public List<String> findFirstRankSubtypeCodeList(Map<String, Object> queryMap);
+    
+    public GoodsTypePO findThirdRankOneByCodes(Map<String, Object> queryMap);
+    
+    public Map<String, Object> findAllRankCodes(Map<String, Object> queryMap);
+    
+    public List<Long> findThirdRankCodes(Map<String, Object> queryMap);
+    
+    public int modifyThirdRankUnAble(Map<String, Object> map);
+    
+    public int modifySecondRankUnAble(Map<String, Object> map);
+    
+    public int modifyFirstRankUnAble(Map<String, Object> map);
+
+    /**
+     * @Title: findOneByNameAndPid
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param queryGoodsTypeMap
+     * @return GoodsTypePO
+     */
+    public GoodsTypePO findOneByNameAndPid(Map<String, Object> queryGoodsTypeMap);
+
+}

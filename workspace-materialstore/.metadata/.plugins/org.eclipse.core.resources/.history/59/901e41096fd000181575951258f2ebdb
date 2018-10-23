@@ -1,0 +1,14 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>demo</title>
+
+
+</head>
+<div th:include="default/yzcheader :: header"></div>
+<body class="yzc-skin-buyer">
+	
+<script th:src="@{/res/js/jquery.js}" type="text/javascript"></script>
+	
+</body>
+</html>

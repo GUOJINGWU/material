@@ -1,0 +1,50 @@
+/**  
+ * @Title: GoodsSupplyDAO.java
+ * @Package com.youzhicai.materialstore.dao
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午4:48:22
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youzhicai.materialstore.po.GoodsSupplyPO;
+
+/**
+ * @ClassName: GoodsSupplyDAO
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月20日 下午4:48:22
+ */
+public interface GoodsSupplyDAO {
+
+    /**
+     * @Title: save
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsSupplyPO
+     * @return int
+     */
+    public int save(GoodsSupplyPO goodsSupplyPO);
+
+    public List<GoodsSupplyPO> findListByGid(Map<String, Object> queryMap);
+
+    public GoodsSupplyPO findOneById(Map<String, Object> queryMap);
+
+    /**
+     * @Title: findOneByFull
+     * @Description: TODO(这里用一句话描述这个方法的作用)
+     * @param goodsSupplyPO
+     * @return Long
+     */
+    public Long findOneByFull(GoodsSupplyPO goodsSupplyPO);
+    
+    public int delete(GoodsSupplyPO goodsSupplyPO);
+    
+    public int deleteByGid(GoodsSupplyPO goodsSupplyPO);
+    
+    public int deleteByGidExclude(GoodsSupplyPO goodsSupplyPO);
+
+}

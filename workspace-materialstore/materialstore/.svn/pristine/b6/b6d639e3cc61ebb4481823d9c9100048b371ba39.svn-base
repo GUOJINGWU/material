@@ -1,0 +1,74 @@
+/**  
+ * @Title: GoodsSearchModel.java
+ * @Package com.youzhicai.materialstore.web.model
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年10月16日 上午10:35:51
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.model;
+
+/**
+ * @ClassName: GoodsSearchModel
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年10月16日 上午10:35:51
+ */
+public class GoodsSearchModel {
+
+    private Integer used;
+    private Integer pageNum;
+    private Integer pageSize;
+    private String nameOrCode;
+    private Long tid;
+    private Integer approveStatus;
+
+    public Integer getUsed() {
+        return used;
+    }
+
+    public void setUsed(Integer used) {
+        this.used = used;
+    }
+
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getNameOrCode() {
+        return nameOrCode;
+    }
+
+    public void setNameOrCode(String nameOrCode) {
+        this.nameOrCode = nameOrCode;
+    }
+
+    public Long getTid() {
+        return tid;
+    }
+
+    public void setTid(Long tid) {
+        this.tid = tid;
+    }
+
+    public Integer getApproveStatus() {
+        return approveStatus;
+    }
+
+    public void setApproveStatus(Integer approveStatus) {
+        this.approveStatus = approveStatus;
+    }
+
+}

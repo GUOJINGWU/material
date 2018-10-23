@@ -1,0 +1,52 @@
+/**  
+ * @Title: GoodsTypeController.java
+ * @Package com.youzhicai.materialstore.web.controller
+ * @Description: TODO(用一句话描述该文件做什么)
+ * @author XieXianpeng
+ * @date 2018年9月19日 下午3:24:40
+ * @version V1.0  
+ */
+package com.youzhicai.materialstore.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.youzhicai.materialstore.api.GoodsTypeAPI;
+import com.youzhicai.materialstore.dto.GoodsTypeDTO;
+import com.youzhicai.materialstore.vo.GoodsTypeVO;
+
+/**
+ * @ClassName: GoodsTypeController
+ * @Description: TODO(这里用一句话描述这个类的作用)
+ * @author XieXianpeng
+ * @date 2018年9月19日 下午3:24:40
+ */
+@Controller
+@RequestMapping("web/goodstype")
+public class GoodsTypeController {
+
+    @Autowired
+    private GoodsTypeAPI goodsTypeApi;
+
+    @RequestMapping("subtypeList")
+    public String subtypeList(Model model, long typeId, int depth) {
+        System.out.println("================start==============");
+        
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setTypeId(typeId);
+        goodsTypeDTO.setDepth(depth);
+//        goodsTypeDTO.setTime("abcde");
+        
+        List<GoodsTypeVO> subtypeList = goodsTypeApi.subtypeList(goodsTypeDTO);
+        model.addAttribute("subtypeList", subtypeList);
+
+        System.out.println("================end==============");
+
+        return "goodstype/index";
+    }
+
+}

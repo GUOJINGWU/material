@@ -1,0 +1,450 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<title>物资分类管理</title>
+<link rel="stylesheet" th:href="@{/res/layui/css/layui.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/global.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/source.css}"></link>
+<link rel="stylesheet" th:href="@{/res/css/ui-dialog.css}" />
+<link rel="stylesheet" th:href="@{/res/css/material.css}"></link>
+</head>
+<div th:include="default/yzcheader :: header"></div>
+<body class="yzc-skin-buyer">
+	<div class="yzc-frame-loading"></div>
+	<div class="yzc-frame-top"></div>
+	<div class="yzc-frame-center">
+		<div class="yzc-frame-right">
+			<div class="yzc-frame-body">
+				<div class="main-container">
+					<div class="main-con-form source" style="position:relative">
+						<div class="yui-title-c yui-clearfix">
+							<h4 class="yui-title-first yui-fl">物资分类管理</h4>
+							<a class="material-blue-btn new-add-btn" onclick="addMaterial()">+添加分类</a>
+							<a class="material-white-btn import-btn" >导入</a>
+						</div>
+						<form id="type-search-form" class="layui-form inquiry-form yzc-fl" style="padding: 0 15px; margin-top: 20px">
+							<div class="layui-form-item">
+								<div class="layui-inline yzc-clearfix">
+									<label class="">物资分类：</label>
+									<div class="layui-input-block  layui-input2  material-select" style="width: 170px; display: inherit; margin-left: 0">
+										<select name="firstId" id="first-type" class="material-type" lay-filter="first-type">
+											<option value="">请选择一级分类</option>
+										</select>
+									</div>
+									<div class="layui-input-block  layui-input2  material-select" style="width: 170px; display: inherit; margin-left: 0">
+										<select name="secondId" id="second-type" class="material-type" lay-filter="second-type">
+											<option value="">请选择二级分类</option>
+										</select>
+									</div>
+									<div class="layui-input-block layui-input2   material-select" style="width: 170px; display: inherit; margin-left: 0">
+										<select name="thirdId" id="third-type" class="material-state" lay-filter="third-type">
+											<option value="">请选择三级分类</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<input name="pageNum" id="pageNum" type="hidden" value="1" />
+						</form>
+						<a class="material-radius-btn material-search-btn">搜索</a>
+						<a class="material-clear-btn" onclick="onClear()">清除</a>
+					</div>
+					<div id="show-page-list" class="main-con-table source source-padding yzc-clearfix">
+						<div class="table-con">
+							<table class="layui-table">
+								<colgroup>
+									<col width="4%" />
+									<col width="17%" />
+									<col width="17%" />
+									<col width="17%" />
+									<col width="12%" />
+									<col width="11%" />
+									<col width="9%" />
+									<col width="13%" />
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="yzc-aCenter">序号</th>
+										<th class="yzc-aCenter">一级分类</th>
+										<th class="yzc-aCenter">二级分类</th>
+										<th class="yzc-aCenter">三级分类</th>
+										<th class="yzc-aCenter">物资数</th>
+										<th class="yzc-aCenter">添加人</th>
+										<th class="yzc-aCenter">添加时间</th>
+										<th class="yzc-aCenter">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="goodsType:${searchList.list}">
+										<td class="yzc-aCenter" th:text="${goodsTypeStat.count}"></td>
+										<td class="yzc-aCenter" th:text="${goodsType.firstName}"></td>
+										<td class="yzc-aCenter" th:text="${goodsType.secondName}"></td>
+										<td class="yzc-aCenter" th:text="${goodsType.thirdName}"></td>
+										<td class="yzc-aCenter" th:text="${goodsType.goodsCount}"></td>
+										<td class="yzc-aCenter" th:text="${goodsType.creator}"></td>
+										<td class="yzc-aCenter" th:text="${#dates.format(goodsType.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+										<td class="yzc-aCenter">
+											<th:block th:if="${goodsType.goodsCount == 0}">
+												<a class="material-a" th:onclick="'deleteType(\''+${goodsType.thirdId}+'\')'">删除</a>
+											</th:block>
+											<a class="material-a">修改</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="layui-box layui-laypage layui-laypage-default yzc-fr" id="pageDiv"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="yzc-frame-bottom ">
+		<ul>
+			<li>
+				<a>网站首页</a>
+			</li>
+			<li>
+				<a>招标采购</a>
+			</li>
+			<li>
+				<a>企业采购</a>
+			</li>
+			<li>
+				<a>优采金融</a>
+			</li>
+			<li>
+				<a>帮助中心</a>
+			</li>
+			<li class="yzc-frame-nob">
+				<a>意见反馈</a>
+			</li>
+		</ul>
+		<p>Copyright©2016 优质采（北京）科技发展有限公司 版权所有 皖ICP备05004986号</p>
+	</div>
+	<input type="hidden" id="currentProjectURL" th:value="${currentProjectURL}" />
+</body>
+<script th:src="@{/res/js/jquery.js}"></script>
+<script th:src="@{/res/js/placeholder.js}"></script>
+<script th:src="@{/res/util/dialog-plus-min.js}"></script>
+<script th:src="@{/res/util/purchaseplanCommon.js}"></script>
+<script th:src="@{/res/util/form-to-json.js}"></script>
+<script th:src="@{/res/util/assertion.js}"></script>
+<script type="text/javascript">
+function isEmptyString(str) {
+	var bool = false;
+	if (typeof (str) == "undefined" || str == null || str == 'null' || str == '') {
+		bool = true;
+	}
+	return bool;
+}
+
+Date.prototype.pattern=function(fmt) {           
+    var o = {           
+    "M+" : this.getMonth()+1, //月份           
+    "d+" : this.getDate(), //日           
+    "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时           
+    "H+" : this.getHours(), //小时           
+    "m+" : this.getMinutes(), //分           
+    "s+" : this.getSeconds(), //秒           
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度           
+    "S" : this.getMilliseconds() //毫秒           
+    };           
+    var week = {           
+    "0" : "/u65e5",           
+    "1" : "/u4e00",           
+    "2" : "/u4e8c",           
+    "3" : "/u4e09",           
+    "4" : "/u56db",           
+    "5" : "/u4e94",           
+    "6" : "/u516d"          
+    };           
+    if(/(y+)/.test(fmt)){           
+        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));           
+    }           
+    if(/(E+)/.test(fmt)){           
+        fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);           
+    }           
+    for(var k in o){           
+        if(new RegExp("("+ k +")").test(fmt)){           
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));           
+        }           
+    }           
+    return fmt;           
+}  
+</script>
+<script type="text/javascript">
+//清空搜索条件
+function onClear() {
+	$("#first-type").val('');
+	
+	var secondType = $("#second-type");
+	secondType.empty();
+	secondType.append('<option value="">请选择二级分类</option>');
+	$('#second-type').attr("disabled",true);
+	
+	var thirdType = $("#third-type");
+	thirdType.empty();
+	thirdType.append('<option value="">请选择三级分类</option>');
+	$('#third-type').attr("disabled",true);
+	
+	layui.use(['form', 'layedit', 'laydate'], function(){
+		var form = layui.form()
+		form.render('select'); 
+	});
+}
+
+// 搜索物资分类列表
+function search(datas){
+	$.ajax({
+		url : '/web/goodstype/searchtable',
+		type : 'POST',
+		contentType: 'application/json',
+		datType: "JSON",
+		data : JSON.stringify(datas),
+		async : false,
+		success : function(data) {
+			// 物资分类列表
+			$("#show-page-list").empty();
+			var searchList = data.searchList;
+			var list = searchList.list;
+			var trs = '';
+			list.forEach(function(val, index) {
+				var creator = val.creator;
+				if(isEmptyString(creator)){
+					creator = '';
+				}
+				var createTime = new Date(val.createTime).pattern("yyyy-MM-dd HH:mm:ss");
+				var operate = '';
+				if(val.goodsCount == 0){
+					operate = '<a class="material-a" onclick="deleteType(\''+val.thirdId+'\')">删除</a>';
+				}
+				operate = operate + '<a class="material-a">修改</a>';
+				
+				trs = trs + 
+					'<tr>'+
+						'<td class="yzc-aCenter">'+(index+1)+'</td>'+
+						'<td class="yzc-aCenter">'+val.firstName+'</td>'+
+						'<td class="yzc-aCenter">'+val.secondName+'</td>'+
+						'<td class="yzc-aCenter">'+val.thirdName+'</td>'+
+						'<td class="yzc-aCenter">'+val.goodsCount+'</td>'+
+						'<td class="yzc-aCenter">'+creator+'</td>'+
+						'<td class="yzc-aCenter">'+createTime+'</td>'+
+						'<td class="yzc-aCenter">'+operate+'</td>'+
+					'</tr>';
+			});
+	
+			var showTable = ''+
+				'<div class="table-con">'+
+					'<table class="layui-table">'+
+						'<colgroup>'+
+							'<col width="4%" />'+
+							'<col width="17%" />'+
+							'<col width="17%" />'+
+							'<col width="17%" />'+
+							'<col width="12%" />'+
+							'<col width="11%" />'+
+							'<col width="9%" />'+
+							'<col width="13%" />'+
+						'</colgroup>'+
+						'<thead>'+
+							'<tr>'+
+								'<th class="yzc-aCenter">序号</th>'+
+								'<th class="yzc-aCenter">一级分类</th>'+
+								'<th class="yzc-aCenter">二级分类</th>'+
+								'<th class="yzc-aCenter">三级分类</th>'+
+								'<th class="yzc-aCenter">物资数</th>'+
+								'<th class="yzc-aCenter">添加人</th>'+
+								'<th class="yzc-aCenter">添加时间</th>'+
+								'<th class="yzc-aCenter">操作</th>'+
+							'</tr>'+
+						'</thead>'+
+						'<tbody>'+
+							trs+
+						'</tbody>'+
+					'</table>'
+				'</div>';
+			var pageInfo = '<div class="layui-box layui-laypage layui-laypage-default yzc-fr" id="pageDiv"></div>';
+			$("#show-page-list").append(showTable).append(pageInfo);
+			
+			// 加载分页数据
+			var totalPageNum = searchList.totalPageNum; 
+			var pageNum = searchList.pageNum; 
+			layui.use([ 'laypage', 'layer' ], function() {
+				var laypage = layui.laypage, layer = layui.layer;
+				laypage({
+					cont : 'pageDiv',
+					pages : totalPageNum, //总页数
+					groups : 5, //连续显示分页数
+					curr : pageNum,
+					jump: function(obj){
+						if(pageNum != obj.curr){
+							var datas = $("#type-search-form").toJSON();
+							datas.pageNum = obj.curr;
+							search(datas);
+						}
+					}
+				});
+			});
+			
+			// 当前页
+			$("#pageNum").val(datas.pageNum);
+		},
+		error : function(data) {
+			AlertErrorMessage("请稍后再试！");
+		}
+	});
+}
+
+// 搜索
+$(".material-search-c-btn").click(function(){
+	var datas = $("#type-search-form").toJSON();
+	search(datas);
+});
+
+//删除分类
+function deleteType(tid){
+	var txt = '<h3 class="alert-title" style="text-align: center;font-size:18px;margin-top:75px">确定删除该分类？</h3>';
+	confirmDialog("确认删除", txt, function() {
+		var datas = {tid : tid};
+ 		$.ajax({
+			url : '/web/goodstype/delete',
+			type : 'POST',
+			contentType: 'application/json; charset=UTF-8',
+			datType: "JSON",
+			data : JSON.stringify(datas),
+			async : false,
+			success : function(data) {
+				if(data.code == 1000){					
+					var datas = $("#type-search-form").toJSON();
+					search(datas);
+				}else{
+					AlertErrorMessage("删除失败！");
+				}
+			},
+			error : function(data) {
+				AlertErrorMessage("请稍后再试！");
+			}
+		});   
+	});
+}
+
+function addMaterial() {
+	var currentProjectURL = $("#currentProjectURL").val();
+	OpenSimpleUrl("add-type", "添加分类", currentProjectURL + "/pageJump1", '540px', '416px');
+}
+</script>
+
+<script th:inline="javascript">
+// 分页
+var totalPageNum = [[${searchList.totalPageNum}]]; //取值
+var pageNum = [[${searchList.pageNum}]]; //取值
+layui.use([ 'laypage', 'layer' ], function() {
+	var laypage = layui.laypage, layer = layui.layer;
+	laypage({
+		cont : 'pageDiv',
+		pages : totalPageNum, //总页数
+		groups : 5, //连续显示分页数
+		curr : pageNum,
+		jump: function(obj){
+			if(pageNum != obj.curr){
+				var datas = $("#search-form-1").toJSON();
+				datas.pageNum = obj.curr;
+				search(datas);
+			}
+		}
+	});
+});
+
+// 初始化分类选项
+$(function(){	
+	// 加载一级分类
+	var firstRankTypes = [[${firstRankTypes}]];
+    if(typeof(firstRankTypes)!="undefined"){
+	    var firstType1 = $("#first-type");
+	    firstRankTypes.forEach(function( val, index ) {
+	    	firstType1.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+		});
+    }
+    // 二三级分类默认不可用
+    $('#second-type').attr("disabled",true);
+    $('#third-type').attr("disabled",true);
+    
+    layui.use(['form', 'layedit', 'laydate'], function(){
+		var form = layui.form()
+		,layer = layui.layer
+		,layedit = layui.layedit
+		,laydate = layui.laydate;
+
+		// 一级菜单选择
+		form.on('select(first-type)', function(data){
+			var secondType = $("#second-type");
+			secondType.empty();
+			secondType.append('<option value="">请选择二级分类</option>');
+			$('#second-type').attr("disabled",true);
+			
+			var thirdType = $("#third-type");
+			thirdType.empty();
+			thirdType.append('<option value="">请选择三级分类</option>');
+			$('#third-type').attr("disabled",true);
+			
+			// 加载二级类型列表
+			var firstRankId = data.value;
+			var datas = {pid : firstRankId};
+			$.ajax({
+				url : '/web/goodstype/subtypeList',
+				type : 'POST',
+				contentType: 'application/json; charset=UTF-8',
+				datType: "JSON",
+				data : JSON.stringify(datas),
+				async : false,
+				success : function(data) {
+					var secondType = $("#second-type");
+					secondType.empty();
+					secondType.append('<option value="">请选择二级分类</option>');
+					
+					data.forEach(function( val, index ) {
+				    	secondType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+					});
+				},
+				error : function(data) {
+					AlertErrorMessage("请稍后再试！");
+				}
+			});  
+			
+			$('#second-type').attr("disabled",false);
+			form.render('select'); 
+		});
+		 	
+		// 二级菜单选择
+		form.on('select(second-type)', function(data){
+			// 加载三级类型列表
+			var secondRankId = data.value;
+			var datas = {pid : secondRankId};
+			$.ajax({
+				url : '/web/goodstype/subtypeList',
+				type : 'POST',
+				contentType: 'application/json; charset=UTF-8',
+				datType: "JSON",
+				data : JSON.stringify(datas),
+				async : false,
+				success : function(data) {
+					var thirdType = $("#third-type");
+					thirdType.empty();
+					thirdType.append('<option value="">请选择三级分类</option>');
+					
+					data.forEach(function( val, index ) {
+		 		    	thirdType.append('<option value="'+val.id+'" code="'+val.code+'">' + val.name + '</option>');
+					});
+				},
+				error : function(data) {
+					AlertErrorMessage("请稍后再试！");
+				}
+			}); 
+		
+			$('#third-type').attr("disabled",false);
+			form.render('select');
+		});
+    });
+});
+</script>
+</html>
